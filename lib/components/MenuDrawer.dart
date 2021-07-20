@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:picklick_customer/screens/Auth/authenticationWrapper.dart';
 
 class MenuDrawer extends StatelessWidget {
   @override
@@ -29,7 +32,10 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             title: Text('Log Out'),
             trailing: Icon(Icons.logout),
-            onTap: () {},
+            onTap: () async {
+              await FirebaseAuth.instance.signOut();
+              Get.to(() => AuthenticationWrapper());
+            },
           )
         ],
       ),

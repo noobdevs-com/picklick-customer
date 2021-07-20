@@ -14,11 +14,48 @@
       },
       "oauth_client": [
         {
-          "client_id": "440576805797-drn6rn578so7m68dqf18sr5v132k33dt.apps.googleusercontent.com",
+          "client_id": "440576805797-qqbhatlv3bm7uh27utdm6h073nkni6d2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.melwin.picklick_customer",
             "certificate_hash": "92dd11826245b06707f3d247a2b4c70d4da20e0d"
+          }
+        },
+        {
+          "client_id": "440576805797-9tfgv1ndib1qg2m8b056idq396bfancv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQd9pLtbhLMgFljoE_aZJ21qqc1ez7IVg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "440576805797-9tfgv1ndib1qg2m8b056idq396bfancv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:440576805797:android:0a4091a778c656e37ab64c",
+        "android_client_info": {
+          "package_name": "com.melwin.picklick_hotel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "440576805797-pn76cjp14pe8ih7ufl1i41pkstai8ifh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.melwin.picklick_hotel",
+            "certificate_hash": "b877ab9b8b6039be9f050e1a04a44232e919e405"
           }
         },
         {

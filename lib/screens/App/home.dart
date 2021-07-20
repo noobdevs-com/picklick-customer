@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:picklick_customer/components/MenuDrawer.dart';
-import 'package:picklick_customer/screens/App/cart.dart';
+import 'package:picklick_customer/screens/App/cartScreen.dart';
 import 'package:picklick_customer/screens/App/shopTile.dart';
 
 class Home extends StatelessWidget {
@@ -59,14 +60,13 @@ class Home extends StatelessWidget {
           ],
         ),
         body: TabBarView(children: [
-          Center(child: Text('This is the Shop Status tab')),
+          ShopTile(),
           Center(child: Text('This is the Shop Status tab')),
           Center(child: Text('This is the PickLcik tab')),
         ]),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => MyCart()));
+            Get.to(() => CartScreen());
           },
           child: Icon(Icons.shopping_cart),
         ),

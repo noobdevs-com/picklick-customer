@@ -1,9 +1,22 @@
 import 'package:flutter/cupertino.dart';
 
 class Shop {
-  Shop({required this.title, required this.location, required this.img});
+  Shop(
+      {required this.name,
+      required this.location,
+      required this.img,
+      required this.ownerId});
 
-  String title;
+  String name;
   String location;
-  ImageProvider img;
+  String img;
+  String ownerId;
+
+  factory Shop.toJson(json) {
+    return Shop(
+        img: json['img'],
+        name: json['name'],
+        location: json['location'],
+        ownerId: json['ownerId']);
+  }
 }

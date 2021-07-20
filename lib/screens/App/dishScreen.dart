@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:picklick_customer/screens/App/dishTile.dart';
 
-class DetailsPage extends StatefulWidget {
-  @override
-  _DetailsPageState createState() => _DetailsPageState();
-}
+class DishScreen extends StatelessWidget {
+  DishScreen({required this.id});
+  final String id;
 
-class _DetailsPageState extends State<DetailsPage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -14,7 +12,9 @@ class _DetailsPageState extends State<DetailsPage> {
         appBar: AppBar(),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: DishTile(),
+          child: DishTile(
+            id: id,
+          ),
         ),
       ),
     );

@@ -1,13 +1,22 @@
 import 'package:flutter/cupertino.dart';
 
 class Dish {
-  Dish({
-    required this.title,
-    required this.price,
-    required this.img,
-  });
+  Dish(
+      {required this.name,
+      required this.price,
+      required this.img,
+      required this.ownerId});
 
-  String title;
+  String name;
   String price;
-  ImageProvider img;
+  String img;
+  String ownerId;
+
+  factory Dish.toJson(json) {
+    return Dish(
+        name: json['name'],
+        price: json['price'],
+        img: json['img'],
+        ownerId: json['ownerId']);
+  }
 }

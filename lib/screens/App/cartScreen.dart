@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class MyCart extends StatefulWidget {
+class CartScreen extends StatefulWidget {
   @override
-  _MyCartState createState() => _MyCartState();
+  _CartScreenState createState() => _CartScreenState();
 }
 
-class _MyCartState extends State<MyCart> {
+class _CartScreenState extends State<CartScreen> {
   int quantity = 1;
   @override
   Widget build(BuildContext context) {
