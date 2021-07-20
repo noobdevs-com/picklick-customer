@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "440576805797",
+    "project_id": "picklick-12b21",
+    "storage_bucket": "picklick-12b21.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:440576805797:android:1f79ee4a67e851c47ab64c",
+        "android_client_info": {
+          "package_name": "com.melwin.picklick_customer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "440576805797-drn6rn578so7m68dqf18sr5v132k33dt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.melwin.picklick_customer",
+            "certificate_hash": "92dd11826245b06707f3d247a2b4c70d4da20e0d"
+          }
+        },
+        {
+          "client_id": "440576805797-9tfgv1ndib1qg2m8b056idq396bfancv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQd9pLtbhLMgFljoE_aZJ21qqc1ez7IVg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "440576805797-9tfgv1ndib1qg2m8b056idq396bfancv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
