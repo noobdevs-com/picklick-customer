@@ -9,7 +9,22 @@ class DishScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          actions: [
+            Row(
+              children: [
+                Icon(Icons.shopping_cart),
+                SizedBox(
+                  width: 12,
+                ),
+                Text('0'),
+                SizedBox(
+                  width: 40,
+                )
+              ],
+            )
+          ],
+        ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: DishTile(

@@ -10,7 +10,7 @@ class Loading extends StatelessWidget {
           itemBuilder: (BuildContext context, int index) {
             return DecoratedBox(
               decoration: BoxDecoration(
-                color: index.isEven ? Colors.red : Colors.green,
+                color: index.isEven ? Colors.red : Color(0xFFCFB840),
               ),
             );
           },

@@ -34,8 +34,11 @@ class _DishTileState extends State<DishTile> {
                 backgroundImage: NetworkImage(_controller.dishes[index].img),
               ),
               trailing: ElevatedButton(
+                style: ElevatedButton.styleFrom(primary: Color(0xFFCFB840)),
                 onPressed: () {},
-                child: Icon(Icons.add_shopping_cart_rounded),
+                child: Icon(
+                  Icons.add_shopping_cart_rounded,
+                ),
               ),
             ),
           );

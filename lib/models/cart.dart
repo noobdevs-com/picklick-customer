@@ -20,4 +20,8 @@ class Cart {
   void removeDishtoCart(Dish dish) {
     cart.remove(dish);
   }
+
+  int getCartItemCount() {
+    return cart.length;
+  }
 }

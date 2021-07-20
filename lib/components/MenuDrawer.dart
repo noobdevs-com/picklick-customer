@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:picklick_customer/screens/App/accountScreen.dart';
 import 'package:picklick_customer/screens/Auth/authenticationWrapper.dart';
 
 class MenuDrawer extends StatelessWidget {
@@ -11,23 +12,21 @@ class MenuDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            decoration: BoxDecoration(color: Color(0xFFCFB840)),
-            child: Text('Melwin'),
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Color(0xFFCFB840),
+            ),
+            child: Text(
+              FirebaseAuth.instance.currentUser!.displayName.toString(),
+              style: TextStyle(fontSize: 18),
+            ),
           ),
           ListTile(
             title: Text('My Account'),
             trailing: Icon(Icons.person),
-            onTap: () {},
-          ),
-          ListTile(
-            title: Text('Veiw Partners'),
-            trailing: Icon(Icons.group),
-            onTap: () {},
-          ),
-          ListTile(
-            title: Text('About'),
-            trailing: Icon(Icons.people),
-            onTap: () {},
+            onTap: () {
+              Get.to(() => MyAccount());
+            },
           ),
           ListTile(
             title: Text('Log Out'),
