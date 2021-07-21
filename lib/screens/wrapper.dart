@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:picklick_customer/controllers/hotel.dart';
 import 'package:picklick_customer/screens/App/home.dart';
 import 'package:picklick_customer/screens/Auth/authenticationWrapper.dart';
 

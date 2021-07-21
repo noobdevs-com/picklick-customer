@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:picklick_customer/controllers/cart.dart';
 import 'package:picklick_customer/controllers/hotel.dart';
 
 class DishTile extends StatefulWidget {
@@ -10,7 +11,8 @@ class DishTile extends StatefulWidget {
 }
 
 class _DishTileState extends State<DishTile> {
-  final HotelController _controller = Get.put(HotelController());
+  final HotelController _controller = Get.find();
+  final CartController _cartController = Get.find();
 
   @override
   void initState() {
@@ -35,7 +37,14 @@ class _DishTileState extends State<DishTile> {
               ),
               trailing: ElevatedButton(
                 style: ElevatedButton.styleFrom(primary: Color(0xFFCFB840)),
-                onPressed: () {},
+                onPressed: () {
+                  if (_cartController.cart
+                      .contains(_controller.dishes[index])) {
+                    return Get.snackbar("Item already in cart",
+                        "The item you have choosen is already in cart.");
+                  }
+                  _cartController.addDishtoCart(_controller.dishes[index]);
+                },
                 child: Icon(
                   Icons.add_shopping_cart_rounded,
                 ),

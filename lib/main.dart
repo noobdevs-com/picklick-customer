@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:picklick_customer/controllers/binding/binding.dart';
 
 import 'package:picklick_customer/screens/wrapper.dart';
 
@@ -35,6 +36,7 @@ class _MyAppState extends State<MyApp> {
       routes: {
         '/': (context) => Wrapper(),
       },
+      initialBinding: InitBinding(),
     );
   }
 }

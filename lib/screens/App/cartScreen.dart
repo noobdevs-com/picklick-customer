@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:picklick_customer/controllers/cart.dart';
 import 'package:picklick_customer/screens/App/paymentMethodScreen.dart';
 
 class CartScreen extends StatefulWidget {
@@ -8,7 +9,8 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  int quantity = 1;
+  final CartController _cartController = Get.find();
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -16,8 +18,8 @@ class _CartScreenState extends State<CartScreen> {
         appBar: AppBar(
           title: Text('My Cart'),
         ),
-        body: ListView.builder(
-            itemCount: 2,
+        body: Obx(() => ListView.builder(
+            itemCount: _cartController.cart.length,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.fromLTRB(
@@ -28,52 +30,56 @@ class _CartScreenState extends State<CartScreen> {
                 ),
                 child: Card(
                   child: ListTile(
-                    title: Text('data'),
-                    subtitle: Text(''),
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.blue,
-                      radius: 28,
-                    ),
+                    title: Text(_cartController.cart[index].name),
+                    subtitle: Text('₹ ${_cartController.cart[index].price}'),
                     trailing: SizedBox(
-                      width: 180,
+                      width: 160,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           IconButton(
                               onPressed: () {
-                                setState(() {
-                                  if (quantity > 1) {
-                                    quantity--;
-                                  }
-                                });
+                                if (_cartController.cart[index].quantity > 1)
+                                  _cartController.cart[index].setQuantity(-1);
+                                _cartController.price.value -=
+                                    _cartController.cart[index].price;
+
+                                setState(() {});
                               },
                               icon: Icon(Icons.remove)),
-                          Text(quantity.toString()),
+                          Text(_cartController.cart[index].quantity.toString()),
                           IconButton(
                               onPressed: () {
-                                setState(() {
-                                  quantity++;
-                                });
+                                _cartController.cart[index].setQuantity(1);
+                                _cartController.price.value +=
+                                    _cartController.cart[index].price;
+
+                                setState(() {});
                               },
                               icon: Icon(Icons.add)),
-                          IconButton(onPressed: () {}, icon: Icon(Icons.delete))
+                          IconButton(
+                              onPressed: () {
+                                _cartController.removeDishtoCart(
+                                    _cartController.cart[index]);
+                              },
+                              icon: Icon(Icons.delete))
                         ],
                       ),
                     ),
                   ),
                 ),
               );
-            }),
+            })),
         bottomNavigationBar: BottomAppBar(
-          notchMargin: 10,
+          
           child: Row(
             children: [
-              Expanded(
+              Obx(() => Expanded(
                   flex: 1,
                   child: Text(
-                    '      Total :  ₹ ${0.0}',
+                    '      Total :  ₹ ${_cartController.price.value}',
                     style: TextStyle(fontSize: 20),
-                  )),
+                  ))),
               Expanded(
                 flex: 1,
                 child: ElevatedButton(

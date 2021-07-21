@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:picklick_customer/controllers/cart.dart';
+import 'package:picklick_customer/screens/App/cartScreen.dart';
 import 'package:picklick_customer/screens/App/dishTile.dart';
 
 class DishScreen extends StatelessWidget {
+  final CartController _cartController = Get.find();
+
   DishScreen({required this.id});
   final String id;
 
@@ -13,11 +18,14 @@ class DishScreen extends StatelessWidget {
           actions: [
             Row(
               children: [
-                Icon(Icons.shopping_cart),
+                IconButton(
+                  icon: Icon(Icons.shopping_cart),
+                  onPressed: () => Get.to(() => CartScreen()),
+                ),
                 SizedBox(
                   width: 12,
                 ),
-                Text('0'),
+                Obx(() => Text(_cartController.cart.length.toString())),
                 SizedBox(
                   width: 40,
                 )
