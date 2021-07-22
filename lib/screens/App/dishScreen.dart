@@ -7,14 +7,16 @@ import 'package:picklick_customer/screens/App/dishTile.dart';
 class DishScreen extends StatelessWidget {
   final CartController _cartController = Get.find();
 
-  DishScreen({required this.id});
+  DishScreen({required this.id, required this.name});
   final String id;
+  final String name;
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          title: Text(name),
           actions: [
             Row(
               children: [

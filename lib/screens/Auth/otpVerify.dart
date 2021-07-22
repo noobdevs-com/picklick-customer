@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:picklick_customer/constants/valueConstants.dart';
+import 'package:picklick_customer/screens/Auth/fillUserDetails.dart';
 import 'package:picklick_customer/screens/App/home.dart';
 import 'package:pin_input_text_field/pin_input_text_field.dart';
 
@@ -56,10 +58,9 @@ class _OTPScreenState extends State<OTPScreen> {
 
       // Sign the user in (or link) with the credential
 
-      UserCredential userCredential =
-          await auth.signInWithCredential(credential);
-      print("verifyCode: " + userCredential.toString());
-      Get.to(() => Home());
+      await auth.signInWithCredential(credential);
+
+      Get.to(() => UserDetails());
     } on FirebaseAuthException catch (e) {
       print(e);
       Get.snackbar('Try Again', 'The Entered Code is invalid');
@@ -108,10 +109,7 @@ class _OTPScreenState extends State<OTPScreen> {
                   'Verify Otp',
                   style: TextStyle(fontSize: 18),
                 ),
-                style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(18)))),
+                style: kElevatedButtonStyle,
                 onPressed: () {
                   verifyOtp(verificationId, otpController.text);
                 },

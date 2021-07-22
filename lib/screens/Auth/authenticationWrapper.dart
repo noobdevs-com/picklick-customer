@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:picklick_customer/constants/valueConstants.dart';
 import 'package:picklick_customer/screens/Auth/otpVerify.dart' as OTP;
 
 class AuthenticationWrapper extends StatelessWidget {
@@ -51,11 +52,10 @@ class AuthenticationWrapper extends StatelessWidget {
                     keyboardType: TextInputType.number,
                     controller: phonenumberController,
                     decoration: InputDecoration(
-                        focusColor: Colors.black,
-                        prefix: SizedBox(width: 50, child: Text('+91')),
-                        border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(18)))),
+                      focusedBorder: KTFFocusedBorderStyle,
+                      prefix: SizedBox(width: 50, child: Text('+91')),
+                      border: KTFBorderStyle,
+                    ),
                   ),
                 ),
               ),
@@ -65,11 +65,7 @@ class AuthenticationWrapper extends StatelessWidget {
                     'Verify Number',
                     style: TextStyle(fontSize: 18),
                   ),
-                  style: ElevatedButton.styleFrom(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(18)))),
+                  style: kElevatedButtonStyle,
                   onPressed: () {
                     Get.to(() =>
                         OTP.OTPScreen(number: phonenumberController.text));

@@ -15,37 +15,34 @@ class ShopTile extends StatelessWidget {
         : ListView.builder(
             itemCount: _hotelController.shops.length,
             itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                child: Card(
-                  color: Colors.grey[200],
-                  child: ListTile(
-                    title: Text(
-                      _hotelController.shops[index].name,
-                      style: TextStyle(
-                        fontSize: 23,
-                      ),
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                color: Colors.grey[200],
+                child: ListTile(
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  title: Text(
+                    _hotelController.shops[index].name,
+                    style: TextStyle(
+                      fontSize: 23,
                     ),
-                    subtitle: Text(
-                      _hotelController.shops[index].location,
-                      style:
-                          TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
-                    ),
-                    leading: Hero(
-                      tag: 'logo',
-                      child: CircleAvatar(
-                        radius: 28,
-                        backgroundImage: NetworkImage(
-                            '${_hotelController.shops[index].img}'),
-                      ),
-                    ),
-                    trailing: Text('CLOSED'),
-                    onTap: () {
-                      Get.to(() => DishScreen(
-                            id: _hotelController.shops[index].ownerId,
-                          ));
-                    },
                   ),
+                  subtitle: Text(
+                    _hotelController.shops[index].location,
+                    style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
+                  ),
+                  leading: CircleAvatar(
+                    radius: 28,
+                    backgroundImage:
+                        NetworkImage('${_hotelController.shops[index].img}'),
+                  ),
+                  trailing: Text('CLOSED'),
+                  onTap: () {
+                    Get.to(() => DishScreen(
+                          id: _hotelController.shops[index].ownerId,
+                          name: _hotelController.shops[index].name,
+                        ));
+                  },
                 ),
               );
             }));

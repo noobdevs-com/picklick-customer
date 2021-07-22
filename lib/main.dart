@@ -31,7 +31,10 @@ class _MyAppState extends State<MyApp> {
               style: ElevatedButton.styleFrom(
             primary: Colors.red,
             elevation: 0,
-          ))),
+          )),
+          textSelectionTheme: TextSelectionThemeData(
+            cursorColor: Colors.black,
+          )),
       initialRoute: '/',
       routes: {
         '/': (context) => Wrapper(),
