@@ -6,7 +6,7 @@ import 'package:picklick_customer/screens/App/dishScreen.dart';
 import 'package:picklick_customer/screens/App/loading.dart';
 
 class ShopTile extends StatelessWidget {
-  final HotelController _hotelController = Get.find();
+  final HotelController _hotelController = Get.put(HotelController());
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +17,7 @@ class ShopTile extends StatelessWidget {
             itemBuilder: (context, index) {
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                color: Colors.grey[200],
                 child: ListTile(
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   title: Text(
                     _hotelController.shops[index].name,
                     style: TextStyle(
@@ -32,7 +29,7 @@ class ShopTile extends StatelessWidget {
                     style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
                   ),
                   leading: CircleAvatar(
-                    radius: 28,
+                    radius: 30,
                     backgroundImage:
                         NetworkImage('${_hotelController.shops[index].img}'),
                   ),

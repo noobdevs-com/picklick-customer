@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:picklick_customer/constants/valueConstants.dart';
+import 'package:picklick_customer/screens/App/home.dart';
 
 class UserDetails extends StatelessWidget {
   final nameController = TextEditingController();
-  final altphnNumberController = TextEditingController();
+  final emailController = TextEditingController();
   final addressController = TextEditingController();
 
   @override
@@ -13,7 +16,7 @@ class UserDetails extends StatelessWidget {
         child: Scaffold(
       body: Center(
         child: SizedBox(
-          width: 300,
+          width: 350,
           height: 500,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -37,7 +40,7 @@ class UserDetails extends StatelessWidget {
               ),
               TextFormField(
                 keyboardType: TextInputType.emailAddress,
-                controller: altphnNumberController,
+                controller: emailController,
                 decoration: InputDecoration(
                     labelStyle: TextStyle(color: Colors.black),
                     focusedBorder: KTFFocusedBorderStyle,
@@ -55,7 +58,21 @@ class UserDetails extends StatelessWidget {
                     border: KTFBorderStyle),
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  final user = FirebaseAuth.instance.currentUser!;
+
+                  await FirebaseFirestore.instance
+                      .collection('userAddressBook')
+                      .doc()
+                      .set({
+                    'name': nameController.text,
+                    'email': emailController.text,
+                    'address': addressController.text,
+                    'uid': user.uid,
+                  });
+                  user.updateDisplayName('${nameController.text}');
+                  Get.offAll(() => Home());
+                },
                 child: Text('Add Details'),
                 style: kElevatedButtonStyle,
               )

@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picklick_customer/components/MenuDrawer.dart';
 import 'package:picklick_customer/components/searchBar.dart';
+import 'package:picklick_customer/controllers/cart.dart';
 import 'package:picklick_customer/screens/App/cartScreen.dart';
 import 'package:picklick_customer/screens/App/shopTile.dart';
 
 class Home extends StatelessWidget {
+  final CartController _cartController = Get.put(CartController());
   final List<Tab> myTabs = <Tab>[
     Tab(
       child: Row(

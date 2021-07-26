@@ -14,12 +14,17 @@ class MenuDrawer extends StatelessWidget {
           DrawerHeader(
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Color(0xFFCFB840),
+              color: Color(0xFFF0EBCC),
             ),
-            child: Text(
-              FirebaseAuth.instance.currentUser!.displayName.toString(),
-              style: TextStyle(fontSize: 18),
-            ),
+            child: FirebaseAuth.instance.currentUser!.displayName == null
+                ? Text(
+                    'User',
+                    style: TextStyle(fontSize: 18),
+                  )
+                : Text(
+                    FirebaseAuth.instance.currentUser!.displayName.toString(),
+                    style: TextStyle(fontSize: 18),
+                  ),
           ),
           ListTile(
             title: Text('My Account'),

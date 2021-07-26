@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:picklick_customer/models/cartItem.dart';
 import 'package:picklick_customer/models/dish.dart';
 
 class CartController extends GetxController {
@@ -12,10 +13,14 @@ class CartController extends GetxController {
 
   void removeDishtoCart(Dish dish) {
     cart.remove(dish);
-    price.value = dish.price;
+    price.value -= dish.price;
   }
 
   int getCartItemCount() {
     return cart.length;
+  }
+
+  List<CartItem> getCartItems() {
+    return cart.map((e) => CartItem.toJson(e)).toList();
   }
 }

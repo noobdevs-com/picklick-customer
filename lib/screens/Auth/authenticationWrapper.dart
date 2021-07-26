@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picklick_customer/constants/valueConstants.dart';
@@ -5,11 +6,47 @@ import 'package:picklick_customer/screens/Auth/otpVerify.dart' as OTP;
 
 class AuthenticationWrapper extends StatelessWidget {
   final phonenumberController = TextEditingController();
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  late final String verificationId;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SizedBox(
+    Future<void> sendOtp() async {
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: '+91${phonenumberController.text}',
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          // ANDROID ONLY!
+
+          // Sign the user in (or link) with the auto-generated credential
+          await auth.signInWithCredential(credential);
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          Get.snackbar('Error', "Exception" + e.message!.toString());
+          if (e.code == 'invalid-phone-number') {
+            print('The provided phone number is not valid.');
+            Get.snackbar(
+                'Invalid Number', 'Please Check the number you have entered');
+          }
+
+          // Handle other errors
+        },
+        codeSent: (String vId, int? resendToken) async {
+          verificationId = vId;
+          print('Code has been sent');
+          Get.snackbar('OTP Sent', 'OTP has been sent to you mobile number');
+          Get.to(() => OTP.OTPScreen(
+                number: phonenumberController.text,
+                verificationId: verificationId,
+              ));
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          print('Timed out...');
+        },
+      );
+    }
+
+    return SafeArea(
+      child: Scaffold(
+        body: SizedBox(
           height: 700,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -20,7 +57,7 @@ class AuthenticationWrapper extends StatelessWidget {
                   image: AssetImage(
                     'assets/logo.png',
                   ),
-                  height: 130,
+                  height: 100,
                 ),
                 Text(
                   "Dream IT, Beleive IT and Build IT",
@@ -47,7 +84,7 @@ class AuthenticationWrapper extends StatelessWidget {
               Text('Enter Your Phone Number Here To Continue :'),
               Flexible(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 60),
+                  padding: EdgeInsets.symmetric(horizontal: 60),
                   child: TextField(
                     keyboardType: TextInputType.number,
                     controller: phonenumberController,
@@ -67,8 +104,7 @@ class AuthenticationWrapper extends StatelessWidget {
                   ),
                   style: kElevatedButtonStyle,
                   onPressed: () {
-                    Get.to(() =>
-                        OTP.OTPScreen(number: phonenumberController.text));
+                    sendOtp();
                   },
                 ),
               )

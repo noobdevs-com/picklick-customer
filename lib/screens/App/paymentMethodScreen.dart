@@ -1,5 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:picklick_customer/constants/constants.dart';
+import 'package:picklick_customer/controllers/cart.dart';
+import 'package:picklick_customer/models/dish.dart';
 
 class PaymentMethodScreen extends StatefulWidget {
   const PaymentMethodScreen({Key? key}) : super(key: key);
@@ -9,6 +13,7 @@ class PaymentMethodScreen extends StatefulWidget {
 }
 
 class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
+  final CartController _cartController = Get.find();
   PaymentMethod? _method = PaymentMethod.CASH_ON_DELIVERY;
   @override
   Widget build(BuildContext context) {
@@ -51,6 +56,23 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
             },
           ),
         ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Expanded(
+          flex: 1,
+          child: ElevatedButton(
+            onPressed: () {
+              print(_cartController.getCartItems());
+              // await FirebaseFirestore.instance.collection('orders').add({
+              //   'dishes' : _cartController.cart
+              // })
+            },
+            child: Text('Checkout'),
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+            ),
+          ),
+        ),
       ),
     ));
   }

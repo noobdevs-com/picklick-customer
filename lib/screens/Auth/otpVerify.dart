@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picklick_customer/constants/valueConstants.dart';
 import 'package:picklick_customer/screens/Auth/fillUserDetails.dart';
-import 'package:picklick_customer/screens/App/home.dart';
+
 import 'package:pin_input_text_field/pin_input_text_field.dart';
 
 class OTPScreen extends StatefulWidget {
   final String number;
+  final String verificationId;
 
-  OTPScreen({required this.number});
+  OTPScreen({required this.number, required this.verificationId});
 
   @override
   _OTPScreenState createState() => _OTPScreenState();
@@ -18,35 +19,8 @@ class OTPScreen extends StatefulWidget {
 class _OTPScreenState extends State<OTPScreen> {
   final otpController = TextEditingController();
   FirebaseAuth auth = FirebaseAuth.instance;
-  late String verificationId;
 
   // Firebase Auth Function
-  Future<void> sendOtp() async {
-    await FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: '+91${widget.number}',
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        // ANDROID ONLY!
-
-        // Sign the user in (or link) with the auto-generated credential
-        await auth.signInWithCredential(credential);
-      },
-      verificationFailed: (FirebaseAuthException e) {
-        print("Exception" + e.message!.toString());
-        if (e.code == 'invalid-phone-number') {
-          print('The provided phone number is not valid.');
-        }
-
-        // Handle other errors
-      },
-      codeSent: (String vId, int? resendToken) async {
-        verificationId = vId;
-        print('Code has been sent');
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        print('Timed out...');
-      },
-    );
-  }
 
   Future<void> verifyOtp(String verificationId, String smsCode) async {
     try {
@@ -54,23 +28,17 @@ class _OTPScreenState extends State<OTPScreen> {
 
       // Create a PhoneAuthCredential with the code
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
-          verificationId: verificationId, smsCode: smsCode);
+          verificationId: widget.verificationId, smsCode: smsCode);
 
       // Sign the user in (or link) with the credential
 
       await auth.signInWithCredential(credential);
 
-      Get.to(() => UserDetails());
+      Get.offAll(() => UserDetails());
     } on FirebaseAuthException catch (e) {
       print(e);
       Get.snackbar('Try Again', 'The Entered Code is invalid');
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    sendOtp();
   }
 
   @override
@@ -111,7 +79,7 @@ class _OTPScreenState extends State<OTPScreen> {
                 ),
                 style: kElevatedButtonStyle,
                 onPressed: () {
-                  verifyOtp(verificationId, otpController.text);
+                  verifyOtp(widget.verificationId, otpController.text);
                 },
               ),
             ],

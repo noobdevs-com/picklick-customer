@@ -28,17 +28,16 @@ class _DishTileState extends State<DishTile> {
         itemCount: _controller.dishes.length,
         itemBuilder: (context, index) {
           return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+            margin: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
             child: ListTile(
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               title: Text(
                 _controller.dishes[index].name,
                 style: TextStyle(fontSize: 18),
               ),
               subtitle: Text('₹ ${_controller.dishes[index].price}'),
               leading: CircleAvatar(
-                radius: 28,
+                radius: 29,
                 backgroundImage: NetworkImage(_controller.dishes[index].img),
               ),
               trailing: ElevatedButton(

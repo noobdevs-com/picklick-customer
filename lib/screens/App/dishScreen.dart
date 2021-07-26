@@ -16,7 +16,13 @@ class DishScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(name),
+          title: Text(
+            '$name\'s Menu',
+            style: TextStyle(
+              fontSize: 16,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
           actions: [
             Row(
               children: [

@@ -21,10 +21,15 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       theme: ThemeData(
+          cardTheme: CardTheme(
+              elevation: 4,
+              color: Color(0xFfF0EBCC).withOpacity(0.80),
+              shadowColor: Colors.grey),
           primaryColor: Color(0xFFCFB840),
           visualDensity: VisualDensity.adaptivePlatformDensity,
           scaffoldBackgroundColor: Color(0xFFF0EBCC),
           floatingActionButtonTheme: FloatingActionButtonThemeData(
+              elevation: 2,
               backgroundColor: Color(0xFFCFB840),
               foregroundColor: Colors.black),
           elevatedButtonTheme: ElevatedButtonThemeData(

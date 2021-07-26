@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class Dish extends GetxController {
@@ -15,7 +14,9 @@ class Dish extends GetxController {
   String ownerId;
   final _quantity = 1.obs;
   int get quantity => _quantity.value;
-  setQuantity(int value) => _quantity.value += value;
+  setQuantity(int value) {
+    _quantity.value += value;
+  }
 
   factory Dish.toJson(json) {
     return Dish(
