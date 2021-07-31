@@ -5,13 +5,13 @@ class Dish extends GetxController {
     required this.name,
     required this.price,
     required this.img,
-    required this.ownerId,
+    // required this.ownerId,
   });
 
   String name;
   double price;
   String img;
-  String ownerId;
+  // String ownerId;
   final _quantity = 1.obs;
   int get quantity => _quantity.value;
   setQuantity(int value) {
@@ -20,9 +20,10 @@ class Dish extends GetxController {
 
   factory Dish.toJson(json) {
     return Dish(
-        name: json['name'],
-        price: double.parse(json['price']),
-        img: json['img'],
-        ownerId: json['ownerId']);
+      name: json['name'],
+      price: double.parse(json['price'].toString()),
+      img: json['img'],
+      // ownerId: json['ownerId']
+    );
   }
 }

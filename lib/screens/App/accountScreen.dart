@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import 'package:picklick_customer/constants/constants.dart';
 import 'package:picklick_customer/constants/valueConstants.dart';
 import 'package:picklick_customer/models/user.dart';
@@ -15,23 +16,22 @@ class MyAccount extends StatefulWidget {
 }
 
 class _MyAccountState extends State<MyAccount> {
-  final user = FirebaseAuth.instance.currentUser!;
-  final docId = FirebaseFirestore.instance.collection('userAddressBook').doc();
-
   var currentPage = ProfileVeiw.PROFILE_VEIW;
+  final user = FirebaseAuth.instance.currentUser!;
 
   final ref = FirebaseFirestore.instance
       .collection('userAddressBook')
-      .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid);
+      .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .get();
 
   Widget profileView() {
     return SingleChildScrollView(
       child: Center(
         child: SizedBox(
-          height: 500,
+          height: 550,
           width: 350,
           child: FutureBuilder(
-              future: ref.get(),
+              future: ref,
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasData) {
                   final data = CustomerUser.toJson(snapshot.data!.docs[0]);
@@ -79,7 +79,25 @@ class _MyAccountState extends State<MyAccount> {
                               Text('Email :        '),
                               Flexible(
                                 child: Text(
-                                  '${data.email}',
+                                  data.email,
+                                  textAlign: TextAlign.justify,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 15),
+                          child: Row(
+                            children: [
+                              Text('Phone Number :        '),
+                              Flexible(
+                                child: Text(
+                                  FirebaseAuth.instance.currentUser!.phoneNumber
+                                      .toString(),
                                   textAlign: TextAlign.justify,
                                 ),
                               ),
@@ -96,7 +114,7 @@ class _MyAccountState extends State<MyAccount> {
                               Text('Address :    '),
                               Expanded(
                                 child: Text(
-                                  '${data.address}',
+                                  data.address,
                                   textAlign: TextAlign.justify,
                                 ),
                               ),
@@ -173,22 +191,25 @@ class _MyAccountState extends State<MyAccount> {
                   border: KTFBorderStyle),
             ),
             ElevatedButton(
-              onPressed: () {
-                FirebaseFirestore.instance
+              onPressed: () async {
+                var data = await ref;
+
+                await FirebaseFirestore.instance
                     .collection('userAddressBook')
-                    .doc(docId.toString())
-                    .set({
-                  'name': nameController.text,
-                  'email': emailController.text,
-                  'address': addressController.text,
-                  'uid': user.uid,
-                }).whenComplete(() => setState(() {
+                    .doc(data.docs[0].id)
+                    .update({
+                      'name': nameController.text,
+                      'email': emailController.text,
+                      'address': addressController.text,
+                    })
+                    .whenComplete(() => setState(() {
                           nameController.clear();
                           emailController.clear();
                           addressController.clear();
-                          currentPage = ProfileVeiw.PROFILE_VEIW;
-                        }));
-                user.updateDisplayName('${nameController.text}');
+
+                          user.updateDisplayName(nameController.text);
+                        }))
+                    .catchError((e) => Get.snackbar('Try Again', e));
               },
               child: Text('Update Details'),
               style: kElevatedButtonStyle,

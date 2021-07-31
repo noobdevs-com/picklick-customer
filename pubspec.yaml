@@ -26,6 +26,7 @@ dependencies:
   firebase_storage: ^10.0.1
   cloud_firestore: ^2.4.0
   pin_input_text_field: ^4.1.0
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:

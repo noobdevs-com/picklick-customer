@@ -69,9 +69,10 @@ class UserDetails extends StatelessWidget {
                     'email': emailController.text,
                     'address': addressController.text,
                     'uid': user.uid,
+                  }).whenComplete(() {
+                    user.updateDisplayName('${nameController.text}');
+                    Get.offAll(() => Home());
                   });
-                  user.updateDisplayName('${nameController.text}');
-                  Get.offAll(() => Home());
                 },
                 child: Text('Add Details'),
                 style: kElevatedButtonStyle,

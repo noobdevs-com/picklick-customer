@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picklick_customer/constants/valueConstants.dart';
+import 'package:picklick_customer/screens/App/home.dart';
 import 'package:picklick_customer/screens/Auth/fillUserDetails.dart';
 
 import 'package:pin_input_text_field/pin_input_text_field.dart';
@@ -32,9 +34,16 @@ class _OTPScreenState extends State<OTPScreen> {
 
       // Sign the user in (or link) with the credential
 
-      await auth.signInWithCredential(credential);
+      final user = await auth.signInWithCredential(credential);
 
-      Get.offAll(() => UserDetails());
+      final addressList = await FirebaseFirestore.instance
+          .collection('userAddressBook')
+          .where('uid', isEqualTo: user.user!.uid)
+          .get();
+
+      addressList.docs.length > 0
+          ? Get.offAll(() => Home())
+          : Get.offAll(() => UserDetails());
     } on FirebaseAuthException catch (e) {
       print(e);
       Get.snackbar('Try Again', 'The Entered Code is invalid');

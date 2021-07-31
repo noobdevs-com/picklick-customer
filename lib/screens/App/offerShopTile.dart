@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picklick_customer/controllers/hotel.dart';
-import 'package:picklick_customer/screens/App/dishScreen.dart';
+
 import 'package:picklick_customer/screens/App/loading.dart';
 
-class ShopTile extends StatelessWidget {
+import 'offerDishScreen.dart';
+
+class OfferShopTile extends StatelessWidget {
   final HotelController _hotelController = Get.put(HotelController());
 
   @override
@@ -51,7 +53,7 @@ class ShopTile extends StatelessWidget {
                         ),
                   onTap: () {
                     if (_hotelController.shops[index].status == 'open')
-                      Get.to(() => DishScreen(
+                      Get.to(() => OfferDishScreen(
                             id: _hotelController.shops[index].ownerId,
                             name: _hotelController.shops[index].name,
                           ));

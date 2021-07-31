@@ -22,8 +22,8 @@ class _MyAppState extends State<MyApp> {
     return GetMaterialApp(
       theme: ThemeData(
           cardTheme: CardTheme(
-              elevation: 4,
-              color: Color(0xFfF0EBCC).withOpacity(0.80),
+              elevation: 2,
+              color: Color(0xFfF0EBCC).withOpacity(0.825),
               shadowColor: Colors.grey),
           primaryColor: Color(0xFFCFB840),
           visualDensity: VisualDensity.adaptivePlatformDensity,

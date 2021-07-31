@@ -4,10 +4,12 @@ import 'package:picklick_customer/controllers/cart.dart';
 import 'package:picklick_customer/screens/App/cartScreen.dart';
 import 'package:picklick_customer/screens/App/dishTile.dart';
 
-class DishScreen extends StatelessWidget {
+import 'offerDishTile.dart';
+
+class OfferDishScreen extends StatelessWidget {
   final CartController _cartController = Get.find();
 
-  DishScreen({required this.id, required this.name});
+  OfferDishScreen({required this.id, required this.name});
   final String id;
   final String name;
 
@@ -45,7 +47,7 @@ class DishScreen extends StatelessWidget {
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: DishTile(
+          child: OfferDishTile(
             id: id,
           ),
         ),
