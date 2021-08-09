@@ -61,11 +61,11 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
         child: Expanded(
           flex: 1,
           child: ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               print(_cartController.getCartItems());
-              // await FirebaseFirestore.instance.collection('orders').add({
-              //   'dishes' : _cartController.cart
-              // })
+              await FirebaseFirestore.instance
+                  .collection('orders')
+                  .add({'dishes': _cartController.cart});
             },
             child: Text('Checkout'),
             style: ElevatedButton.styleFrom(

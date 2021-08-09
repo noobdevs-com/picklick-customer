@@ -4,12 +4,21 @@ import 'package:picklick_customer/controllers/cart.dart';
 import 'package:picklick_customer/screens/App/cartScreen.dart';
 import 'package:picklick_customer/screens/App/dishTile.dart';
 
-class DishScreen extends StatelessWidget {
-  final CartController _cartController = Get.find();
+enum MenuScreen { MENU_SCREEN, OFFER_MENU_SCREEN }
 
+class DishScreen extends StatefulWidget {
   DishScreen({required this.id, required this.name});
   final String id;
   final String name;
+
+  @override
+  _DishScreenState createState() => _DishScreenState();
+}
+
+class _DishScreenState extends State<DishScreen> {
+  final CartController _cartController = Get.find();
+
+  MenuScreen tile = MenuScreen.MENU_SCREEN;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +26,7 @@ class DishScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            '$name\'s Menu',
+            '${widget.name}\'s Menu',
             style: TextStyle(
               fontSize: 16,
               fontStyle: FontStyle.italic,
@@ -46,7 +55,35 @@ class DishScreen extends StatelessWidget {
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: DishTile(
-            id: id,
+            id: widget.id,
+            tile: tile,
+          ),
+        ),
+        bottomNavigationBar: BottomAppBar(
+          child: SizedBox(
+            height: 80,
+            child: Row(
+              children: [
+                Expanded(
+                    child: ElevatedButton(
+                  child: Text('Menu'),
+                  onPressed: () {
+                    setState(() {
+                      tile = MenuScreen.MENU_SCREEN;
+                    });
+                  },
+                )),
+                Expanded(
+                    child: ElevatedButton(
+                  child: Text('Offer Menu'),
+                  onPressed: () {
+                    setState(() {
+                      tile = MenuScreen.OFFER_MENU_SCREEN;
+                    });
+                  },
+                ))
+              ],
+            ),
           ),
         ),
       ),

@@ -30,20 +30,26 @@ class HotelController extends GetxController {
   }
 
   Future<void> getDishes(String id) async {
+    loading.value = true;
+    dishes.clear();
     QuerySnapshot data = await FirebaseFirestore.instance
         .collection("hotel_dishes")
         .where('ownerId', isEqualTo: id)
         .get();
 
     dishes.value = data.docs.map((e) => Dish.toJson(e)).toList();
+    loading.value = false;
   }
 
   Future<void> getOfferDishes(String id) async {
+    loading.value = true;
+    offerDishes.clear();
     QuerySnapshot data = await FirebaseFirestore.instance
         .collection("hotel_offerDishes")
         .where('ownerId', isEqualTo: id)
         .get();
 
     offerDishes.value = data.docs.map((e) => OfferDish.fromJson(e)).toList();
+    loading.value = false;
   }
 }

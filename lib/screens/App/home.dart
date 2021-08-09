@@ -4,7 +4,7 @@ import 'package:picklick_customer/components/MenuDrawer.dart';
 import 'package:picklick_customer/components/searchBar.dart';
 import 'package:picklick_customer/controllers/cart.dart';
 import 'package:picklick_customer/screens/App/cartScreen.dart';
-import 'package:picklick_customer/screens/App/offerShopTile.dart';
+
 import 'package:picklick_customer/screens/App/shopTile.dart';
 
 class Home extends StatelessWidget {
@@ -69,7 +69,7 @@ class Home extends StatelessWidget {
           ),
           body: TabBarView(children: [
             ShopTile(),
-            OfferShopTile(),
+            Center(child: Text('This is the PickLcik tab')),
             Center(child: Text('This is the PickLcik tab')),
           ]),
           floatingActionButton: FloatingActionButton(

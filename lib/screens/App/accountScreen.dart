@@ -206,7 +206,7 @@ class _MyAccountState extends State<MyAccount> {
                           nameController.clear();
                           emailController.clear();
                           addressController.clear();
-
+                          currentPage = ProfileVeiw.PROFILE_VEIW;
                           user.updateDisplayName(nameController.text);
                         }))
                     .catchError((e) => Get.snackbar('Try Again', e));
