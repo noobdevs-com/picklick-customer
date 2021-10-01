@@ -21,8 +21,10 @@ class HotelController extends GetxController {
   Future<void> getShops() async {
     loading.value = true;
     shops.clear();
-    QuerySnapshot data =
-        await FirebaseFirestore.instance.collection("hotels").get();
+    QuerySnapshot data = await FirebaseFirestore.instance
+        .collection("hotels")
+        .orderBy('name')
+        .get();
     data.docs.forEach((element) {
       shops.add(Shop.toJson(element));
     });
@@ -34,6 +36,7 @@ class HotelController extends GetxController {
     dishes.clear();
     QuerySnapshot data = await FirebaseFirestore.instance
         .collection("hotel_dishes")
+        .orderBy('name')
         .where('ownerId', isEqualTo: id)
         .get();
 
@@ -46,6 +49,7 @@ class HotelController extends GetxController {
     offerDishes.clear();
     QuerySnapshot data = await FirebaseFirestore.instance
         .collection("hotel_offerDishes")
+        .orderBy('name')
         .where('ownerId', isEqualTo: id)
         .get();
 

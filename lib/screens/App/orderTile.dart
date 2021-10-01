@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:picklick_customer/constants/constants.dart';
+
 import 'package:picklick_customer/models/order.dart';
 import 'package:picklick_customer/screens/App/loading.dart';
-import 'package:intl/intl.dart';
 
 class OrderTile extends StatefulWidget {
   @override
@@ -33,40 +32,47 @@ class _OrderTileState extends State<OrderTile> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(),
-        body: FutureBuilder(
-          future: getOrder(),
-          builder: (_, snapshot) {
-            if (snapshot.hasData) {
-              return Container(
-                child: Column(
-                  children: [
-                    // Dish Details
-                    ListView.builder(
-                      itemCount: order.dishes.length,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return Card(
-                          child: ListTile(
-                            title: Text(order.dishes[index].name),
-                            subtitle: Text(
-                                '₹ ${order.dishes[index].price.toString()}'),
-                            trailing:
-                                Text(order.dishes[index].quantity.toString()),
-                          ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: 16),
-                  ],
-                ),
-              );
-            }
-            return Loading();
-          },
-        ),
+    return Scaffold(
+      appBar: AppBar(),
+      body: FutureBuilder(
+        future: getOrder(),
+        builder: (_, snapshot) {
+          if (snapshot.hasData) {
+            return Container(
+              child: Column(
+                children: [
+                  // Dish Details
+                  ListView.builder(
+                    itemCount: order.dishes.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: ListTile(
+                          title: Text(order.dishes[index].name),
+                          subtitle: Text(
+                              '₹ ${order.dishes[index].price * order.dishes[index].quantity}'),
+                          trailing: CircleAvatar(
+                              backgroundColor: Color(0xFFCFB840),
+                              child: Text(
+                                order.dishes[index].dishQuantity.toString(),
+                                style: TextStyle(color: Colors.black),
+                              )),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 16),
+                  SizedBox(height: 16),
+                  ListTile(
+                    title: Text(
+                        'Your Order Status : ${order.orderStatus.toString().split('.')[1].toUpperCase()}'),
+                  )
+                ],
+              ),
+            );
+          }
+          return Loading();
+        },
       ),
     );
   }

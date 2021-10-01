@@ -22,6 +22,7 @@ class _DishTileState extends State<DishTile> {
     super.initState();
     Future.delayed(Duration.zero, () {
       _controller.getDishes(widget.id);
+      _controller.getOfferDishes(widget.id);
     });
   }
 
@@ -34,8 +35,6 @@ class _DishTileState extends State<DishTile> {
               return Card(
                 margin: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                 child: ListTile(
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   title: Text(
                     _controller.dishes[index].name,
                     style: TextStyle(fontSize: 18),
@@ -69,7 +68,7 @@ class _DishTileState extends State<DishTile> {
     return Obx(() => _controller.loading.value == true
         ? Loading()
         : _controller.offerDishes.length == 0
-            ? Center(child: Text('No Offers'))
+            ? Center(child: Text('No Active Offers'))
             : ListView.builder(
                 itemCount: _controller.offerDishes.length,
                 itemBuilder: (context, index) {
@@ -88,6 +87,7 @@ class _DishTileState extends State<DishTile> {
                           Text(
                             '₹ ${_controller.offerDishes[index].originalPrice}   ',
                             style: TextStyle(
+                                color: Colors.red[300],
                                 decoration: TextDecoration.lineThrough),
                           ),
                           Text(

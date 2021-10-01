@@ -10,10 +10,11 @@ class UserDetails extends StatelessWidget {
   final emailController = TextEditingController();
   final addressController = TextEditingController();
 
+  final ref = FirebaseFirestore.instance.collection('userAddressBook');
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
+    return Scaffold(
       body: Center(
         child: SizedBox(
           width: 350,
@@ -61,10 +62,7 @@ class UserDetails extends StatelessWidget {
                 onPressed: () async {
                   final user = FirebaseAuth.instance.currentUser!;
 
-                  await FirebaseFirestore.instance
-                      .collection('userAddressBook')
-                      .doc()
-                      .set({
+                  await ref.doc(user.uid).set({
                     'name': nameController.text,
                     'email': emailController.text,
                     'address': addressController.text,
@@ -81,6 +79,6 @@ class UserDetails extends StatelessWidget {
           ),
         ),
       ),
-    ));
+    );
   }
 }

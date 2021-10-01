@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:picklick_customer/constants/constants.dart';
+
 import 'package:intl/intl.dart';
-import 'package:picklick_customer/models/order.dart';
+
 import 'loading.dart';
 import 'orderTile.dart';
 
@@ -16,13 +16,13 @@ class OrderScreen extends StatefulWidget {
 class _OrderScreenState extends State<OrderScreen> {
   @override
   Widget build(BuildContext context) {
-    final day = DateTime.now().day;
-    final month = DateTime.now().month;
-    final year = DateTime.now().year;
     final ref = FirebaseFirestore.instance
         .collection('orders')
         .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid);
     return Scaffold(
+      appBar: AppBar(
+        title: Text('My Orders'),
+      ),
       body: StreamBuilder(
           stream: ref.snapshots(),
           builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -43,12 +43,12 @@ class _OrderScreenState extends State<OrderScreen> {
                       },
                       leading: CircleAvatar(
                         backgroundColor: Color(0xFFCFB840),
-                        radius: 29,
                         child: Text(
                           data[index]['quantity'].toString(),
+                          style: TextStyle(color: Colors.black),
                         ),
                       ),
-                      isThreeLine: true,
+
                       title: Text(
                           'Total Price : ₹ ${data[index]['price'].toString()}'),
                       subtitle: Text(DateFormat.yMEd()

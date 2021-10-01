@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.picklick_customer">
+    package="com.melwin.picklick_customer">
    <application
         android:label="PickLick"
         android:icon="@mipmap/ic_launcher">
@@ -39,5 +39,8 @@
             android:value="2" />
              <meta-data android:name="com.google.android.geo.API_KEY"
                android:value="AIzaSyDj6VGvX5WX2O3ubUWnMP-EGAFb03o016U"/>
+               
     </application>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 </manifest>

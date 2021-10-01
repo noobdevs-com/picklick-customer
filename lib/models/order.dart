@@ -9,6 +9,7 @@ class Order {
   double price;
   int quantity;
   String uid;
+
   Order({
     required this.dishes,
     required this.orderStatus,

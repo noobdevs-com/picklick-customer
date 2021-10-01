@@ -11,4 +11,4 @@ const KTFBorderStyle = OutlineInputBorder(
 
 const KTFFocusedBorderStyle = OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(8)),
-    borderSide: BorderSide(color: Colors.black));
+    borderSide: BorderSide(color: Color(0xFFCFB840)));

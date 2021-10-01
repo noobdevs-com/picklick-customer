@@ -26,4 +26,14 @@ class OfferDish {
       img: json['img'],
     );
   }
+
+  Map<String, dynamic> converToJson() {
+    return {
+      "name": this.name,
+      "price": this.discountedPrice,
+      "img": this.img,
+      "originalPrice": this.originalPrice,
+      "quantity": this.quantity
+    };
+  }
 }

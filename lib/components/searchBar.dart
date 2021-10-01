@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:picklick_customer/controllers/hotel.dart';
+import 'package:picklick_customer/constants/valueConstants.dart';
+
 import 'package:picklick_customer/controllers/search.dart';
 import 'package:picklick_customer/models/shop.dart';
 import 'package:picklick_customer/screens/App/dishScreen.dart';
@@ -18,12 +19,11 @@ class _SearchScreenState extends State<SearchScreen> {
   final SearchController searchController = Get.put(SearchController());
   Future<void> getHotels(String value) async {
     searchController.shops.clear();
-    await Future.delayed(Duration(milliseconds: 500));
+    await Future.delayed(Duration(milliseconds: 100));
     FirebaseFirestore.instance
         .collection('hotels')
         .where('name', isGreaterThanOrEqualTo: value)
         .where('name', isLessThan: value + 'z')
-        .limit(5)
         .get()
         .then((snapshot) {
       print("Result:");
@@ -46,6 +46,8 @@ class _SearchScreenState extends State<SearchScreen> {
               // Search Bar
               TextField(
                 decoration: InputDecoration(
+                  border: KTFBorderStyle,
+                  focusedBorder: KTFFocusedBorderStyle,
                   prefixIcon: Icon(
                     Icons.search_outlined,
                     color: Colors.black,
@@ -71,7 +73,6 @@ class _SearchScreenState extends State<SearchScreen> {
               Expanded(
                 child: Obx(
                   () => ListView.builder(
-                    shrinkWrap: true,
                     itemCount: searchController.shops.length,
                     itemBuilder: (_, i) {
                       return Card(
@@ -82,7 +83,6 @@ class _SearchScreenState extends State<SearchScreen> {
                                     id: searchController.shops[i].ownerId,
                                     name: searchController.shops[i].name,
                                   ));
-                              Navigator.pop(context);
                             } else
                               Get.snackbar('Restaurant is Closed',
                                   'The restaurant you are trying to reach is not at service now , try again later');

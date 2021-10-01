@@ -21,8 +21,7 @@ class _MyAccountState extends State<MyAccount> {
 
   final ref = FirebaseFirestore.instance
       .collection('userAddressBook')
-      .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-      .get();
+      .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid);
 
   Widget profileView() {
     return SingleChildScrollView(
@@ -30,8 +29,8 @@ class _MyAccountState extends State<MyAccount> {
         child: SizedBox(
           height: 550,
           width: 350,
-          child: FutureBuilder(
-              future: ref,
+          child: StreamBuilder(
+              stream: ref.snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasData) {
                   final data = CustomerUser.toJson(snapshot.data!.docs[0]);
@@ -146,88 +145,105 @@ class _MyAccountState extends State<MyAccount> {
   final emailController = TextEditingController();
   final addressController = TextEditingController();
 
-  Widget profileEdit() {
-    return Center(
-      child: SizedBox(
-        width: 350,
-        height: 500,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Row(
-              children: [
-                Text('Fill Your Details For Delivery'),
-                SizedBox(width: 15),
-                Icon(Icons.delivery_dining)
-              ],
-            ),
-            Divider(),
-            TextFormField(
-              keyboardType: TextInputType.name,
-              controller: nameController,
-              decoration: InputDecoration(
-                  labelStyle: TextStyle(color: Colors.black),
-                  focusedBorder: KTFFocusedBorderStyle,
-                  labelText: 'Name :',
-                  border: KTFBorderStyle),
-            ),
-            TextFormField(
-              keyboardType: TextInputType.emailAddress,
-              controller: emailController,
-              decoration: InputDecoration(
-                  labelStyle: TextStyle(color: Colors.black),
-                  focusedBorder: KTFFocusedBorderStyle,
-                  labelText: 'E-mail :',
-                  border: KTFBorderStyle),
-            ),
-            TextFormField(
-              maxLines: null,
-              keyboardType: TextInputType.text,
-              controller: addressController,
-              decoration: InputDecoration(
-                  labelStyle: TextStyle(color: Colors.black),
-                  focusedBorder: KTFFocusedBorderStyle,
-                  labelText: 'Address :',
-                  border: KTFBorderStyle),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                var data = await ref;
+  bool loading = false;
 
-                await FirebaseFirestore.instance
-                    .collection('userAddressBook')
-                    .doc(data.docs[0].id)
-                    .update({
-                      'name': nameController.text,
-                      'email': emailController.text,
-                      'address': addressController.text,
-                    })
-                    .whenComplete(() => setState(() {
+  Widget profileEdit() {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Container(
+              height: 5,
+              child: loading == true
+                  ? LinearProgressIndicator(
+                      color: Colors.black,
+                      backgroundColor: Colors.white,
+                    )
+                  : null),
+          Center(
+            child: SizedBox(
+              width: 350,
+              height: 500,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Row(
+                    children: [
+                      Text('Fill Your Details For Delivery'),
+                      SizedBox(width: 15),
+                      Icon(Icons.delivery_dining)
+                    ],
+                  ),
+                  Divider(),
+                  TextFormField(
+                    keyboardType: TextInputType.name,
+                    controller: nameController,
+                    decoration: InputDecoration(
+                        labelStyle: TextStyle(color: Colors.black),
+                        focusedBorder: KTFFocusedBorderStyle,
+                        labelText: 'Name :',
+                        border: KTFBorderStyle),
+                  ),
+                  TextFormField(
+                    keyboardType: TextInputType.emailAddress,
+                    controller: emailController,
+                    decoration: InputDecoration(
+                        labelStyle: TextStyle(color: Colors.black),
+                        focusedBorder: KTFFocusedBorderStyle,
+                        labelText: 'E-mail :',
+                        border: KTFBorderStyle),
+                  ),
+                  TextFormField(
+                    maxLines: null,
+                    keyboardType: TextInputType.text,
+                    controller: addressController,
+                    decoration: InputDecoration(
+                        labelStyle: TextStyle(color: Colors.black),
+                        focusedBorder: KTFFocusedBorderStyle,
+                        labelText: 'Address :',
+                        border: KTFBorderStyle),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      setState(() {
+                        loading = true;
+                      });
+                      final uid = FirebaseAuth.instance.currentUser!.uid;
+                      await FirebaseFirestore.instance
+                          .collection('userAddressBook')
+                          .doc(uid)
+                          .update({
+                        'name': nameController.text,
+                        'email': emailController.text,
+                        'address': addressController.text,
+                      }).whenComplete(() {
+                        user.updateDisplayName(nameController.text);
+                        setState(() {
+                          loading = false;
                           nameController.clear();
                           emailController.clear();
                           addressController.clear();
                           currentPage = ProfileVeiw.PROFILE_VEIW;
-                          user.updateDisplayName(nameController.text);
-                        }))
-                    .catchError((e) => Get.snackbar('Try Again', e));
-              },
-              child: Text('Update Details'),
-              style: kElevatedButtonStyle,
-            )
-          ],
-        ),
+                        });
+                      }).catchError((e) => Get.snackbar('Try Again', e));
+                    },
+                    child: Text('Update Details'),
+                    style: kElevatedButtonStyle,
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-          appBar: AppBar(),
-          body: currentPage == ProfileVeiw.PROFILE_VEIW
-              ? profileView()
-              : profileEdit()),
-    );
+    return Scaffold(
+        appBar: AppBar(),
+        body: currentPage == ProfileVeiw.PROFILE_VEIW
+            ? profileView()
+            : profileEdit());
   }
 }
