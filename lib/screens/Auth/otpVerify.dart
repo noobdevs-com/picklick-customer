@@ -138,21 +138,21 @@ class _OTPScreenState extends State<OTPScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(),
-        body: Column(
-          children: [
-            loading == true
-                ? Container(
-                    height: 5,
-                    child: LinearProgressIndicator(
-                      backgroundColor: Colors.white,
-                      color: Color(0xFFCFB840),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              loading == true
+                  ? Container(
+                      height: 5,
+                      child: LinearProgressIndicator(
+                        backgroundColor: Colors.white,
+                        color: Color(0xFFCFB840),
+                      ),
+                    )
+                  : Container(
+                      height: 5,
                     ),
-                  )
-                : Container(
-                    height: 5,
-                  ),
-            SingleChildScrollView(
-              child: SizedBox(
+              SizedBox(
                 height: 500,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -172,7 +172,8 @@ class _OTPScreenState extends State<OTPScreen> {
                       ],
                     ),
                     Text('Please Enter The 6 - Digit Code Sent To Your Number',
-                        style: TextStyle(fontSize: 16)),
+                        style: TextStyle(fontSize: 16),
+                        textAlign: TextAlign.center),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 50),
                       child: PinInputTextField(
@@ -243,8 +244,8 @@ class _OTPScreenState extends State<OTPScreen> {
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -1,11 +1,12 @@
-import 'dart:io';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:picklick_customer/components/MenuDrawer.dart';
 import 'package:picklick_customer/components/searchBar.dart';
+import 'package:picklick_customer/main.dart';
 import 'package:picklick_customer/screens/App/bucketBriyani.dart';
 import 'package:new_version/new_version.dart';
 import 'package:picklick_customer/screens/App/shopTile.dart';
@@ -21,6 +22,22 @@ class _HomeState extends State<Home> {
     super.initState();
 
     _checkVersion();
+    FirebaseMessaging.onMessage.listen((m) {
+      RemoteNotification? notification = m.notification;
+      AndroidNotification? androidNotification = m.notification!.android;
+      if (notification != null && androidNotification != null) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+                android: AndroidNotificationDetails(
+                    channel.id, channel.name, channel.description,
+                    color: Color(0xFFCFB840),
+                    playSound: true,
+                    icon: '@mipmap/ic_launcher')));
+      }
+    });
     // getlocation();
   }
 

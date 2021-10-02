@@ -29,39 +29,45 @@ class _DishTileState extends State<DishTile> {
   Widget menuScreen() {
     return Obx(() => _controller.loading.value == true
         ? Loading()
-        : ListView.builder(
-            itemCount: _controller.dishes.length,
-            itemBuilder: (context, index) {
-              return Card(
-                margin: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                child: ListTile(
-                  title: Text(
-                    _controller.dishes[index].name,
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  subtitle: Text('₹ ${_controller.dishes[index].price}'),
-                  leading: CircleAvatar(
-                    radius: 29,
-                    backgroundImage:
-                        NetworkImage(_controller.dishes[index].img),
-                  ),
-                  trailing: ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Color(0xFFCFB840)),
-                    onPressed: () {
-                      if (_cartController.cart
-                          .contains(_controller.dishes[index])) {
-                        return Get.snackbar("Item already in cart",
-                            "The item you have choosen is already in cart.");
-                      }
-                      _cartController.addDishtoCart(_controller.dishes[index]);
-                    },
-                    child: Icon(
-                      Icons.add_shopping_cart_rounded,
+        : RefreshIndicator(
+            color: Color(0xFFCFB840),
+            onRefresh: () => _controller.getDishes(widget.id),
+            child: ListView.builder(
+                itemCount: _controller.dishes.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    margin: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                    child: ListTile(
+                      title: Text(
+                        _controller.dishes[index].name,
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      subtitle: Text('₹ ${_controller.dishes[index].price}'),
+                      leading: CircleAvatar(
+                        radius: 29,
+                        backgroundImage:
+                            NetworkImage(_controller.dishes[index].img),
+                      ),
+                      trailing: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: Color(0xFFCFB840)),
+                        onPressed: () {
+                          if (_cartController.cart
+                              .contains(_controller.dishes[index])) {
+                            return Get.snackbar("Item already in cart",
+                                "The item you have choosen is already in cart.");
+                          }
+                          _cartController
+                              .addDishtoCart(_controller.dishes[index]);
+                        },
+                        child: Icon(
+                          Icons.add_shopping_cart_rounded,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              );
-            }));
+                  );
+                }),
+          ));
   }
 
   Widget offerMenuScreen() {

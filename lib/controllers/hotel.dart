@@ -36,8 +36,8 @@ class HotelController extends GetxController {
     dishes.clear();
     QuerySnapshot data = await FirebaseFirestore.instance
         .collection("hotel_dishes")
-        .orderBy('name')
         .where('ownerId', isEqualTo: id)
+        .orderBy('name')
         .get();
 
     dishes.value = data.docs.map((e) => Dish.toJson(e)).toList();
@@ -49,8 +49,8 @@ class HotelController extends GetxController {
     offerDishes.clear();
     QuerySnapshot data = await FirebaseFirestore.instance
         .collection("hotel_offerDishes")
-        .orderBy('name')
         .where('ownerId', isEqualTo: id)
+        .orderBy('name')
         .get();
 
     offerDishes.value = data.docs.map((e) => OfferDish.fromJson(e)).toList();

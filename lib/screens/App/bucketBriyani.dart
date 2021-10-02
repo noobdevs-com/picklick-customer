@@ -15,7 +15,7 @@ class BucketBriyani extends StatefulWidget {
 
 class _BucketBriyaniState extends State<BucketBriyani> {
   String bucket = 'PickLick Mini Bucket  (2 Adults)';
-  int price = 199;
+  late int price;
   TextEditingController descriptionController = TextEditingController();
   String customerName = '';
   String customerAddress = '';
@@ -29,6 +29,8 @@ class _BucketBriyaniState extends State<BucketBriyani> {
     super.initState();
     getFirebaseUserData();
     getFirebaseBucketData();
+
+    print('data');
   }
 
   getFirebaseUserData() {
@@ -61,22 +63,23 @@ class _BucketBriyaniState extends State<BucketBriyani> {
     });
   }
 
-  int getPrice(int price) {
-    bucket == 'PickLick Mini Bucket  (2 Adults)'
-        ? price = miniBucket
-        : bucket == 'PickLick Family Bucket  (2 Adults & 2 Kids)'
-            ? price = familyBucket
-            : bucket == 'PickLick Medium Bucket (6 Adults)'
-                ? price = mediumBucket
-                : bucket == 'PickLick Large Bucket (8 Adults)'
-                    ? price = largeBucket
-                    : price = 0;
-    price = price;
-    return price;
+  getPrice() {
+    setState(() {
+      bucket == 'PickLick Mini Bucket  (2 Adults)'
+          ? price = miniBucket
+          : bucket == 'PickLick Family Bucket  (2 Adults & 2 Kids)'
+              ? price = familyBucket
+              : bucket == 'PickLick Medium Bucket (6 Adults)'
+                  ? price = mediumBucket
+                  : bucket == 'PickLick Large Bucket (8 Adults)'
+                      ? price = largeBucket
+                      : price = 0;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    getPrice();
     return Scaffold(
       body: StreamBuilder(
           stream: FirebaseFirestore.instance
@@ -98,8 +101,8 @@ class _BucketBriyaniState extends State<BucketBriyani> {
             return SingleChildScrollView(
               child: Center(
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height - 200,
-                  width: MediaQuery.of(context).size.width - 30,
+                  height: MediaQuery.of(context).size.height - 250,
+                  width: MediaQuery.of(context).size.width - 25,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -116,6 +119,7 @@ class _BucketBriyaniState extends State<BucketBriyani> {
                               fillColor: Colors.white60,
                               filled: true),
                           value: bucket,
+                          isExpanded: true,
                           onChanged: (value) {
                             setState(() {
                               bucket = value!;
@@ -139,19 +143,20 @@ class _BucketBriyaniState extends State<BucketBriyani> {
                         elevation: 0,
                         child: ListTile(
                           title: Text('Price :'),
-                          subtitle: Text(bucket ==
-                                  'PickLick Mini Bucket  (2 Adults)'
-                              ? ' ₹ ${miniBucket.toString()}'
-                              : bucket ==
-                                      'PickLick Family Bucket  (2 Adults & 2 Kids)'
-                                  ? ' ₹ ${familyBucket.toString()}'
-                                  : bucket ==
-                                          'PickLick Medium Bucket (6 Adults)'
-                                      ? ' ₹ ${mediumBucket.toString()}'
-                                      : bucket ==
-                                              'PickLick Large Bucket (8 Adults)'
-                                          ? ' ₹ ${largeBucket.toString()}'
-                                          : ''),
+                          subtitle: Text('₹ $price'),
+                          // subtitle: Text(bucket ==
+                          //         'PickLick Mini Bucket  (2 Adults)'
+                          //     ? ' ₹ ${miniBucket.toString()}'
+                          //     : bucket ==
+                          //             'PickLick Family Bucket  (2 Adults & 2 Kids)'
+                          //         ? ' ₹ ${familyBucket.toString()}'
+                          //         : bucket ==
+                          //                 'PickLick Medium Bucket (6 Adults)'
+                          //             ? ' ₹ ${mediumBucket.toString()}'
+                          //             : bucket ==
+                          //                     'PickLick Large Bucket (8 Adults)'
+                          //                 ? ' ₹ ${largeBucket.toString()}'
+                          //                 : ''),
                         ),
                       ),
                       TextFormField(
