@@ -20,7 +20,7 @@ class Dish extends GetxController {
 
   factory Dish.toJson(json) {
     print(json);
-    late int? quantity;
+    late int quantity;
     try {
       quantity = json['quantity'];
     } catch (e) {
@@ -30,7 +30,7 @@ class Dish extends GetxController {
       name: json['name'],
       price: double.parse(json['price'].toString()),
       img: json['img'],
-      dishQuantity: quantity!,
+      dishQuantity: quantity,
     );
   }
 

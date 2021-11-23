@@ -5,8 +5,9 @@ import 'package:picklick_customer/screens/App/home.dart';
 import 'package:picklick_customer/screens/App/paymentMethodScreen.dart';
 
 class CartScreen extends StatefulWidget {
-  CartScreen({required this.name});
+  CartScreen({required this.name, required this.id});
   final String name;
+  final String id;
   @override
   _CartScreenState createState() => _CartScreenState();
 }
@@ -43,7 +44,7 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                     TextButton(
                         onPressed: () {
-                          Get.to(() => Home());
+                          Get.offAll(() => Home());
                         },
                         child: Text('Add Items To Cart',
                             style: TextStyle(fontSize: 18, color: Colors.red)))
@@ -184,13 +185,16 @@ class _CartScreenState extends State<CartScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                  onPressed: () {
-                    Get.to(
-                      () => PaymentMethodScreen(
-                        restaurantName: widget.name,
-                      ),
-                    );
-                  },
+                  onPressed: _cartController.cart.length != 0
+                      ? () {
+                          Get.to(
+                            () => PaymentMethodScreen(
+                              restaurantId: widget.id,
+                              restaurantName: widget.name,
+                            ),
+                          );
+                        }
+                      : null,
                   child: Text('Proceed'),
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),

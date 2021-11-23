@@ -4,8 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 import 'package:picklick_customer/screens/App/home.dart';
+
+import 'package:picklick_customer/services/fcm_notification.dart';
 
 import 'package:pin_input_text_field/pin_input_text_field.dart';
 
@@ -27,6 +30,8 @@ class OTPScreen extends StatefulWidget {
 
 class _OTPScreenState extends State<OTPScreen> {
   final otpController = TextEditingController();
+  FCMNotification fcmNotification = FCMNotification();
+  GetStorage getStorage = GetStorage();
   FirebaseAuth auth = FirebaseAuth.instance;
   bool loading = false;
   int? resendToken;
@@ -46,6 +51,7 @@ class _OTPScreenState extends State<OTPScreen> {
       phoneNumber: '+91${widget.number}',
       verificationCompleted: (PhoneAuthCredential credential) async {
         final user = await auth.signInWithCredential(credential);
+
         final userList = await FirebaseFirestore.instance
             .collection('userAddressBook')
             .where('uid', isEqualTo: user.user!.uid)
@@ -54,6 +60,15 @@ class _OTPScreenState extends State<OTPScreen> {
         userList.docs.length > 0
             ? Get.offAll(() => Home())
             : Get.offAll(() => UserDetails());
+
+        getStorage.hasData('deviceToken')
+            ? await FirebaseFirestore.instance
+                .collection('userAddressBook')
+                .doc(FirebaseAuth.instance.currentUser!.uid)
+                .set({'notificationToken': getStorage.read('deviceToken')},
+                    SetOptions(merge: true))
+            : fcmNotification.updateDeviceToken();
+        print('Notification Token : ${getStorage.hasData('deviceToken')}');
 
         Get.snackbar('OTP Verified Succesfully',
             'Your OTP Has Been Verified Automatically !');
@@ -93,6 +108,14 @@ class _OTPScreenState extends State<OTPScreen> {
           .collection('userAddressBook')
           .where('uid', isEqualTo: user.user!.uid)
           .get();
+
+      getStorage.hasData('deviceToken')
+          ? await FirebaseFirestore.instance
+              .collection('userAddressBook')
+              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .set({'notificationToken': getStorage.read('deviceToken')},
+                  SetOptions(merge: true))
+          : fcmNotification.updateDeviceToken();
 
       userList.docs.length > 0
           ? Get.offAll(() => Home())

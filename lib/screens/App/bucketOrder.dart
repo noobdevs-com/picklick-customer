@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'package:intl/intl.dart';
 
@@ -17,6 +18,7 @@ class _BucketOrderState extends State<BucketOrder> {
   final ref = FirebaseFirestore.instance
       .collection('bucketOrder')
       .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,6 +30,11 @@ class _BucketOrderState extends State<BucketOrder> {
           builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData) return Loading();
             final data = snapshot.data!.docs;
+            if (data.isEmpty) {
+              return Center(
+                child: Text('No Pending Bucket Orders'),
+              );
+            }
             return ListView.builder(
                 itemCount: data.length,
                 itemBuilder: (context, index) {
@@ -47,6 +54,21 @@ class _BucketOrderState extends State<BucketOrder> {
                           //     style: TextStyle(color: Colors.black),
                           //   ),
                           // ),
+                          onLongPress: () {
+                            Get.defaultDialog(
+                                title: 'Cancel Order ?',
+                                middleText:
+                                    'Do you want to cancel the bucket Order ?',
+                                textCancel: 'No',
+                                textConfirm: 'Yes',
+                                onConfirm: () async {
+                                  await FirebaseFirestore.instance
+                                      .collection('bucketOrder')
+                                      .doc(data[0].id)
+                                      .delete()
+                                      .whenComplete(() => Get.back());
+                                });
+                          },
                           title: Text('${data[index]['bucket'].toString()}'),
                           trailing:
                               Text('₹ ${data[index]['price'].toString()}'),

@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import 'package:picklick_customer/constants/valueConstants.dart';
 import 'package:picklick_customer/screens/App/home.dart';
 
@@ -67,7 +69,7 @@ class UserDetails extends StatelessWidget {
                     'email': emailController.text,
                     'address': addressController.text,
                     'uid': user.uid,
-                  }).whenComplete(() {
+                  }, SetOptions(merge: true)).whenComplete(() {
                     user.updateDisplayName('${nameController.text}');
                     Get.offAll(() => Home());
                   });

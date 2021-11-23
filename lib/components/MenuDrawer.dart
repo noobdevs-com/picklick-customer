@@ -11,7 +11,6 @@ import 'package:picklick_customer/screens/Auth/authenticationWrapper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MenuDrawer extends StatelessWidget {
-  @override
   openwhatsapp() async {
     var whatsapp = "+918300044575";
     var whatsappURl_android = "whatsapp://send?phone=$whatsapp&text=";

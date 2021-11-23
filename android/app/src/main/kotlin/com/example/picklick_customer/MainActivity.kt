@@ -1,4 +1,4 @@
-package com.melwin.picklick_customer
+package com.mistergroups.picklick
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:picklick_customer/models/dish.dart';
@@ -23,6 +24,7 @@ class HotelController extends GetxController {
     shops.clear();
     QuerySnapshot data = await FirebaseFirestore.instance
         .collection("hotels")
+        .orderBy('status', descending: true)
         .orderBy('name')
         .get();
     data.docs.forEach((element) {
@@ -57,3 +59,5 @@ class HotelController extends GetxController {
     loading.value = false;
   }
 }
+
+mixin AnimatedState {}

@@ -1,14 +1,13 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:picklick_customer/services/local_notification.dart';
+import 'package:timezone/data/latest.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:picklick_customer/components/MenuDrawer.dart';
-import 'package:picklick_customer/components/searchBar.dart';
-import 'package:picklick_customer/main.dart';
+import 'package:picklick_customer/components/shopSearchBar.dart';
 import 'package:picklick_customer/screens/App/bucketBriyani.dart';
-import 'package:new_version/new_version.dart';
 import 'package:picklick_customer/screens/App/shopTile.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -21,30 +20,26 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
 
-    _checkVersion();
-    FirebaseMessaging.onMessage.listen((m) {
-      RemoteNotification? notification = m.notification;
-      AndroidNotification? androidNotification = m.notification!.android;
-      if (notification != null && androidNotification != null) {
-        flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-                android: AndroidNotificationDetails(
-                    channel.id, channel.name, channel.description,
-                    color: Color(0xFFCFB840),
-                    playSound: true,
-                    icon: '@mipmap/ic_launcher')));
+    // _checkVersion();
+    initializeTimeZones();
+    // getlocation();
+
+// Notification
+
+    LocalNotification.initialize(context);
+    FirebaseMessaging.instance.getInitialMessage().then((m) {
+      if (m != null) {
+        final routeMessage = m.data['route'];
+        Navigator.of(context).pushNamed(routeMessage);
       }
     });
-    // getlocation();
-  }
-
-  _checkVersion() {
-    final version = NewVersion(androidId: 'com.melwin.picklick_customer');
-
-    version.showAlertIfNecessary(context: context);
+    FirebaseMessaging.onMessage.listen((m) {
+      LocalNotification.displayHeadsUpNotification(m);
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((m) {
+      final routeMessage = m.data['route'];
+      print(routeMessage);
+    });
   }
 
   late Position _currentPosition;
@@ -105,18 +100,10 @@ class _HomeState extends State<Home> {
 
   final List<Tab> myTabs = <Tab>[
     Tab(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [Text('Shop'), Icon(Icons.shop)],
-      ),
+      child: Text('PickLick Special'),
     ),
     Tab(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('PickLick Special'),
-        ],
-      ),
+      child: Text('Shop'),
     ),
   ];
 
@@ -166,22 +153,30 @@ class _HomeState extends State<Home> {
                 width: 20,
               ),
               Image.asset(
-                'assets/logo1.png',
+                'assets/logo.png',
               )
             ],
           ),
           body: TabBarView(children: [
-            ShopTile(),
             BucketBriyani(),
+            ShopTile(),
           ]),
-          floatingActionButton: FloatingActionButton(
-            child: Image.asset(
-              'assets/whatsapplogo.png',
-              fit: BoxFit.contain,
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: FloatingActionButton(
+              elevation: 0,
+              tooltip: 'Contact Us On WhatsApp',
+              backgroundColor: Color(0xFFF0EBCC),
+              child: Image.asset(
+                'assets/whatsapplogo.png',
+                fit: BoxFit.contain,
+              ),
+              onPressed: () {
+                openwhatsapp();
+                // notification.showNotifications(
+                //     1, 'Hello Dhostho', 'You Have Pressed This Button', 500);
+              },
             ),
-            onPressed: () {
-              openwhatsapp();
-            },
           ),
         ),
       ),

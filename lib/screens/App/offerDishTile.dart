@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picklick_customer/controllers/cart.dart';
 import 'package:picklick_customer/controllers/hotel.dart';
-
+import 'package:picklick_customer/screens/App/dishScreen.dart';
 import 'package:picklick_customer/screens/App/loading.dart';
 
-class DishTile extends StatefulWidget {
-  DishTile({required this.id});
+class OfferDishTile extends StatefulWidget {
+  OfferDishTile({required this.id});
   final String id;
 
   @override
-  _DishTileState createState() => _DishTileState();
+  _OfferDishTileState createState() => _OfferDishTileState();
 }
 
-class _DishTileState extends State<DishTile> {
+class _OfferDishTileState extends State<OfferDishTile> {
   final HotelController _controller = Get.put(HotelController());
   final CartController _cartController = Get.put(CartController());
 
@@ -21,43 +21,56 @@ class _DishTileState extends State<DishTile> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
-      _controller.getDishes(widget.id);
+      _controller.getOfferDishes(widget.id);
     });
   }
 
-  Widget menuScreen() {
+  Widget offerMenuScreen() {
     return Obx(() => _controller.loading.value == true
         ? Loading()
-        : RefreshIndicator(
-            color: Color(0xFFCFB840),
-            onRefresh: () => _controller.getDishes(widget.id),
-            child: ListView.builder(
-                itemCount: _controller.dishes.length,
+        : _controller.offerDishes.length == 0
+            ? Center(child: Text('No Active Offers'))
+            : ListView.builder(
+                itemCount: _controller.offerDishes.length,
                 itemBuilder: (context, index) {
                   return Card(
                     margin: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                     child: ListTile(
                       title: Text(
-                        _controller.dishes[index].name,
+                        _controller.offerDishes[index].name,
                         style: TextStyle(fontSize: 18),
                       ),
-                      subtitle: Text('₹ ${_controller.dishes[index].price}'),
+                      subtitle: Row(
+                        children: [
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            '₹ ${_controller.offerDishes[index].originalPrice}   ',
+                            style: TextStyle(
+                                color: Colors.red[300],
+                                decoration: TextDecoration.lineThrough),
+                          ),
+                          Text(
+                              '    ₹ ${_controller.offerDishes[index].discountedPrice}')
+                        ],
+                      ),
                       leading: CircleAvatar(
                         radius: 29,
                         backgroundImage:
-                            NetworkImage(_controller.dishes[index].img),
+                            NetworkImage(_controller.offerDishes[index].img),
                       ),
                       trailing: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             primary: Color(0xFFCFB840)),
                         onPressed: () {
-                          if (_cartController.cart
-                              .contains(_controller.dishes[index])) {
+                          if (_cartController.offerCart
+                              .contains(_controller.offerDishes[index])) {
                             return Get.snackbar("Item already in cart",
                                 "The item you have choosen is already in cart.");
                           }
-                          _cartController
-                              .addDishtoCart(_controller.dishes[index]);
+                          _cartController.addOfferDishtoCart(
+                              _controller.offerDishes[index]);
                         },
                         child: Icon(
                           Icons.add_shopping_cart_rounded,
@@ -65,12 +78,11 @@ class _DishTileState extends State<DishTile> {
                       ),
                     ),
                   );
-                }),
-          ));
+                }));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: menuScreen());
+    return Scaffold(body: offerMenuScreen());
   }
 }

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picklick_customer/constants/valueConstants.dart';
 
-import 'package:picklick_customer/controllers/search.dart';
+import 'package:picklick_customer/controllers/shopSearch.dart';
 import 'package:picklick_customer/models/shop.dart';
 import 'package:picklick_customer/screens/App/dishScreen.dart';
 
@@ -19,11 +19,12 @@ class _SearchScreenState extends State<SearchScreen> {
   final SearchController searchController = Get.put(SearchController());
   Future<void> getHotels(String value) async {
     searchController.shops.clear();
-    await Future.delayed(Duration(milliseconds: 100));
-    FirebaseFirestore.instance
+
+    await FirebaseFirestore.instance
         .collection('hotels')
         .where('name', isGreaterThanOrEqualTo: value)
-        .where('name', isLessThan: value + 'z')
+        .where('name', isLessThanOrEqualTo: value + 'z')
+        .limit(5)
         .get()
         .then((snapshot) {
       print("Result:");
@@ -31,6 +32,12 @@ class _SearchScreenState extends State<SearchScreen> {
         searchController.shops.add(Shop.toJson(element.data()));
       });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    searchController.dispose();
   }
 
   @override
@@ -46,6 +53,7 @@ class _SearchScreenState extends State<SearchScreen> {
               // Search Bar
               TextField(
                 decoration: InputDecoration(
+                  hintText: 'Search For Restaurants',
                   border: KTFBorderStyle,
                   focusedBorder: KTFFocusedBorderStyle,
                   prefixIcon: Icon(
@@ -80,6 +88,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           onTap: () {
                             if (searchController.shops[i].status == 'open') {
                               Get.to(() => DishScreen(
+                                    img: searchController.shops[i].img,
                                     id: searchController.shops[i].ownerId,
                                     name: searchController.shops[i].name,
                                   ));

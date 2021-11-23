@@ -1,11 +1,9 @@
 name: picklick_customer
 description: A new Flutter project.
 
-# The following line prevents the package from being accidentally published to
-# pub.dev using `pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0+1.05
+version: 1.0.0+1.12
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -16,6 +14,7 @@ dependencies:
 
   # state management
   get: ^4.1.4
+  get_storage:
 
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
@@ -25,8 +24,13 @@ dependencies:
   firebase_core: ^1.7.0
   firebase_storage: ^10.0.4
   cloud_firestore: ^2.5.3
+
+  # Notification
   firebase_messaging: "^10.0.8"
-  flutter_local_notifications: ^8.2.0
+  flutter_local_notifications: ^9.0.0
+  timezone: ^0.8.0
+
+  http: ^0.13.4
 
   # formating
   pin_input_text_field: ^4.1.1
@@ -40,7 +44,9 @@ dependencies:
 
   # App
   url_launcher: ^6.0.12
-  new_version: ^0.2.0
+
+  # Animations
+  lottie: ^1.2.1
 
 dev_dependencies:
   flutter_test:

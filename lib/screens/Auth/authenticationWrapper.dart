@@ -2,8 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:picklick_customer/screens/App/home.dart';
 import 'package:picklick_customer/screens/Auth/otpVerify.dart' as OTP;
+
+import 'package:picklick_customer/services/fcm_notification.dart';
 
 import 'fillUserDetails.dart';
 
@@ -14,7 +17,8 @@ class AuthenticationWrapper extends StatefulWidget {
 
 class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
   FirebaseAuth auth = FirebaseAuth.instance;
-
+  FCMNotification fcmNotification = FCMNotification();
+  GetStorage getStorage = GetStorage();
   final phonenumberController = TextEditingController();
   late String verificationId;
   int? resendToken;
@@ -26,10 +30,12 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
       await FirebaseAuth.instance.verifyPhoneNumber(
           phoneNumber: '+91${phonenumberController.text}',
           verificationCompleted: (PhoneAuthCredential credential) async {
+            print(getStorage.read('deviceToken'));
             // ANDROID ONLY!
 
             // Sign the user in (or link) with the auto-generated credential
             final user = await auth.signInWithCredential(credential);
+
             final userList = await FirebaseFirestore.instance
                 .collection('userAddressBook')
                 .where('uid', isEqualTo: user.user!.uid)
@@ -38,6 +44,13 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
             userList.docs.length > 0
                 ? Get.offAll(() => Home())
                 : Get.offAll(() => UserDetails());
+            getStorage.hasData('deviceToken')
+                ? await FirebaseFirestore.instance
+                    .collection('userAddressBook')
+                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .set({'notificationToken': getStorage.read('deviceToken')},
+                        SetOptions(merge: true))
+                : fcmNotification.updateDeviceToken();
 
             Get.snackbar('OTP Verified Succesfully',
                 'Your OTP Has Been Verified Automatically !');
