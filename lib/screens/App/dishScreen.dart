@@ -100,18 +100,26 @@ class _DishScreenState extends State<DishScreen> {
                             ));
                       },
                       icon: Icon(Icons.search)),
-                  IconButton(
-                    icon: Icon(Icons.shopping_cart),
-                    onPressed: () => Get.to(
-                      () => CartScreen(
-                        id: widget.id,
-                        name: widget.name,
-                      ),
+                  Container(
+                    color: Color(0xFFF0EBCC),
+                    width: 70,
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.shopping_cart),
+                          onPressed: () => Get.to(
+                            () => CartScreen(
+                              id: widget.id,
+                              name: widget.name,
+                            ),
+                          ),
+                        ),
+                        Obx(() => Text(
+                            ('${_cartController.cart.length + _cartController.offerCart.length}')
+                                .toString()))
+                      ],
                     ),
                   ),
-                  Obx(() => Text(
-                      ('${_cartController.cart.length + _cartController.offerCart.length}')
-                          .toString())),
                   SizedBox(
                     width: 25,
                   )

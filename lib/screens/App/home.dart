@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:picklick_customer/screens/App/christmasTikect.dart';
 import 'package:picklick_customer/services/local_notification.dart';
 import 'package:timezone/data/latest.dart';
 import 'package:geolocator/geolocator.dart';
@@ -100,10 +101,22 @@ class _HomeState extends State<Home> {
 
   final List<Tab> myTabs = <Tab>[
     Tab(
-      child: Text('PickLick Special'),
+      child: Text(
+        'Christmas Tickets',
+        textAlign: TextAlign.center,
+      ),
     ),
     Tab(
-      child: Text('Shop'),
+      child: Text(
+        'Shop',
+        textAlign: TextAlign.center,
+      ),
+    ),
+    Tab(
+      child: Text(
+        'Specials',
+        textAlign: TextAlign.center,
+      ),
     ),
   ];
 
@@ -158,8 +171,9 @@ class _HomeState extends State<Home> {
             ],
           ),
           body: TabBarView(children: [
-            BucketBriyani(),
+            ChristmasTicket(),
             ShopTile(),
+            BucketBriyani(),
           ]),
           floatingActionButton: Padding(
             padding: const EdgeInsets.only(bottom: 20),
