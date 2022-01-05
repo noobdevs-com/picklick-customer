@@ -61,7 +61,7 @@ class _MyAccountState extends State<MyAccount> {
                                     ],
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 20),
+                                    fontSize: 24),
                               ),
                             ],
                           ),
@@ -85,10 +85,10 @@ class _MyAccountState extends State<MyAccount> {
                     ],
                   ),
                   Positioned(
-                    left: 45,
-                    top: 240,
+                    left: 70,
+                    top: 250,
                     child: Card(
-                      elevation: 6,
+                      elevation: 1,
                       child: Container(
                         child: Center(
                             child: Text(
@@ -96,12 +96,12 @@ class _MyAccountState extends State<MyAccount> {
                           style: TextStyle(
                             letterSpacing: 1,
                             fontWeight: FontWeight.bold,
-                            fontSize: 23,
+                            fontSize: 19,
                             color: Color(0xFFCFB840),
                           ),
                         )),
-                        height: 80,
-                        width: MediaQuery.of(context).size.width - 90,
+                        height: 60,
+                        width: MediaQuery.of(context).size.width - 150,
                         color: Color(0xFFF0EBCC),
                       ),
                     ),
@@ -252,57 +252,75 @@ class _MyAccountState extends State<MyAccount> {
                     indent: 50,
                   ),
                   SizedBox(height: 15),
-                  TextFormField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Enter Name';
-                      }
-                      return null;
-                    },
-                    keyboardType: TextInputType.name,
-                    controller: nameController,
-                    decoration: InputDecoration(
-                        enabledBorder: KTFBorderStyle,
-                        labelStyle: TextStyle(color: Colors.black),
-                        focusedBorder: KTFFocusedBorderStyle,
-                        hintText: 'Enter Your Name',
-                        labelText: 'Name :',
-                        border: KTFBorderStyle),
+                  Container(
+                    height: 50,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter Name';
+                          }
+                          return null;
+                        },
+                        keyboardType: TextInputType.name,
+                        controller: nameController,
+                        decoration: InputDecoration(
+                            enabledBorder: KTFBorderStyle,
+                            labelStyle: TextStyle(color: Colors.black),
+                            focusedBorder: KTFFocusedBorderStyle,
+                            hintText: 'Enter Your Name',
+                            labelText: 'Name :',
+                            border: KTFBorderStyle),
+                      ),
+                    ),
                   ),
-                  TextFormField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Enter Email';
-                      }
-                      return null;
-                    },
-                    keyboardType: TextInputType.emailAddress,
-                    controller: emailController,
-                    decoration: InputDecoration(
-                        enabledBorder: KTFBorderStyle,
-                        labelStyle: TextStyle(color: Colors.black),
-                        focusedBorder: KTFFocusedBorderStyle,
-                        hintText: 'Enter Your Email',
-                        labelText: 'E-mail :',
-                        border: KTFBorderStyle),
+                  Container(
+                    height: 50,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter Email';
+                          }
+                          return null;
+                        },
+                        keyboardType: TextInputType.emailAddress,
+                        controller: emailController,
+                        decoration: InputDecoration(
+                            enabledBorder: KTFBorderStyle,
+                            labelStyle: TextStyle(color: Colors.black),
+                            focusedBorder: KTFFocusedBorderStyle,
+                            hintText: 'Enter Your Email',
+                            labelText: 'E-mail :',
+                            border: KTFBorderStyle),
+                      ),
+                    ),
                   ),
-                  TextFormField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Enter Address';
-                      }
-                      return null;
-                    },
-                    maxLines: null,
-                    keyboardType: TextInputType.text,
-                    controller: addressController,
-                    decoration: InputDecoration(
-                        enabledBorder: KTFBorderStyle,
-                        labelStyle: TextStyle(color: Colors.black),
-                        focusedBorder: KTFFocusedBorderStyle,
-                        hintText: 'Enter Your Address',
-                        labelText: 'Address :',
-                        border: KTFBorderStyle),
+                  Container(
+                    height: 50,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter Address';
+                          }
+                          return null;
+                        },
+                        maxLines: null,
+                        keyboardType: TextInputType.text,
+                        controller: addressController,
+                        decoration: InputDecoration(
+                            enabledBorder: KTFBorderStyle,
+                            labelStyle: TextStyle(color: Colors.black),
+                            focusedBorder: KTFFocusedBorderStyle,
+                            hintText: 'Enter Your Address',
+                            labelText: 'Address :',
+                            border: KTFBorderStyle),
+                      ),
+                    ),
                   ),
                   ElevatedButton(
                     onPressed: () async {

@@ -28,40 +28,75 @@ class _DishTileState extends State<DishTile> {
   Widget menuScreen() {
     return Obx(() => _controller.loading.value == true
         ? Loading()
-        : RefreshIndicator(
-            color: Color(0xFFCFB840),
-            onRefresh: () => _controller.getDishes(widget.id),
+        : Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
             child: ListView.builder(
                 itemCount: _controller.dishes.length,
                 itemBuilder: (context, index) {
                   return Card(
-                    margin: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                    elevation: 0.5,
+                    margin: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     child: ListTile(
                       title: Text(
                         _controller.dishes[index].name,
                         style: TextStyle(fontSize: 18),
                       ),
                       subtitle: Text('₹ ${_controller.dishes[index].price}'),
-                      leading: CircleAvatar(
-                        radius: 29,
-                        backgroundImage:
-                            NetworkImage(_controller.dishes[index].img),
-                      ),
-                      trailing: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            primary: Color(0xFFCFB840)),
-                        onPressed: () {
-                          if (_cartController.cart
-                              .contains(_controller.dishes[index])) {
-                            return Get.snackbar("Item already in cart",
-                                "The item you have choosen is already in cart.");
-                          }
-                          _cartController
-                              .addDishtoCart(_controller.dishes[index]);
-                        },
-                        child: Icon(
-                          Icons.add_shopping_cart_rounded,
+                      leading: SizedBox(
+                        width: 50,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          child: FadeInImage(
+                              height: 50,
+                              width: 50,
+                              fit: BoxFit.cover,
+                              placeholder: AssetImage('assets/mainLogo.png'),
+                              image: NetworkImage(
+                                _controller.dishes[index].img,
+                              )),
                         ),
+                      ),
+                      trailing: Obx(
+                        () => _cartController.cart
+                                .contains(_controller.dishes[index])
+                            ? Column(
+                                children: [
+                                  Expanded(
+                                      child: Text(
+                                    'Added',
+                                    style: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.grey,
+                                    ),
+                                  )),
+                                  Expanded(
+                                    child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            primary: Colors.red,
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 2, horizontal: 4)),
+                                        onPressed: () {
+                                          _cartController.removeDishfromCart(
+                                              _controller.dishes[index],
+                                              _controller
+                                                  .dishes[index].quantity);
+                                        },
+                                        child: Icon(Icons.remove_circle)),
+                                  )
+                                ],
+                              )
+                            : ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    primary: Color(0xFFCFB840)),
+                                onPressed: () {
+                                  _cartController.addDishtoCart(
+                                      _controller.dishes[index],
+                                      _controller.dishes[index].quantity);
+                                },
+                                child: Icon(
+                                  Icons.add_shopping_cart_rounded,
+                                ),
+                              ),
                       ),
                     ),
                   );

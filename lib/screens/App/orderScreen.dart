@@ -46,23 +46,7 @@ class _OrderScreenState extends State<OrderScreen> {
                           ),
                         );
                       },
-
-                      trailing: CircleAvatar(
-                        radius: 10,
-                        backgroundColor: data[index]['orderStatus'] ==
-                                OrderStatus.finished
-                            ? Colors.green[300]
-                            : data[index]['orderStatus'] == OrderStatus.rejected
-                                ? Colors.red[200]
-                                : data[index]['orderStatus'] ==
-                                        OrderStatus.inprocess
-                                    ? Colors.yellow[300]
-                                    : data[index]['orderStatus'] ==
-                                            OrderStatus.delivering
-                                        ? Colors.orange[300]
-                                        : Color(0xFFCFB840),
-                      ),
-
+                      trailing: Icon(Icons.arrow_right),
                       title: Text(
                           'Total Price : ₹ ${data[index]['price'].toString()}'),
                       subtitle: Text(DateFormat.yMMMEd()

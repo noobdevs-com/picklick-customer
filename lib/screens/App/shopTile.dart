@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:get/get.dart';
 
+import 'package:get/get.dart';
+import 'package:animations/animations.dart';
 import 'package:picklick_customer/controllers/hotel.dart';
 import 'package:picklick_customer/screens/App/dishScreen.dart';
 import 'package:picklick_customer/screens/App/loading.dart';
@@ -25,65 +25,78 @@ class ShopTile extends StatelessWidget {
                   child: ListView.builder(
                       itemCount: _hotelController.shops.length,
                       itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  _hotelController.shops[index].name,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                        return Card(
+                          shadowColor: Colors.black87,
+                          elevation: 2,
+                          margin: EdgeInsets.all(2),
+                          child: ListTile(
+                            title: Text(
+                              _hotelController.shops[index].name!,
+                              style: TextStyle(
+                                fontSize: 19,
                               ),
-                            ],
-                          ),
-                          subtitle: Text(
-                            _hotelController.shops[index].location,
-                            style: TextStyle(
-                                fontSize: 15, fontStyle: FontStyle.italic),
-                          ),
-                          leading: Hero(
-                            tag: _hotelController.shops[index],
-                            child: CircleAvatar(
-                              radius: 29,
-                              backgroundImage: NetworkImage(
-                                  '${_hotelController.shops[index].img}'),
+                              overflow: TextOverflow.ellipsis,
                             ),
+                            subtitle: Text(
+                              _hotelController.shops[index].location!,
+                              style: TextStyle(
+                                  fontSize: 15, fontStyle: FontStyle.italic),
+                            ),
+                            leading: SizedBox(
+                              width: 50,
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(50)),
+                                child: Hero(
+                                    tag: _hotelController.shops[index],
+                                    child: FadeInImage(
+                                        height: 50,
+                                        width: 50,
+                                        fit: BoxFit.cover,
+                                        placeholder:
+                                            AssetImage('assets/mainLogo.png'),
+                                        image: NetworkImage(
+                                          _hotelController.shops[index].img!,
+                                        ))),
+                              ),
+                            ),
+                            trailing: !_hotelController.loading.value
+                                ? StreamBuilder(
+                                    stream: FirebaseFirestore.instance
+                                        .collection('hotels')
+                                        .where('ownerId',
+                                            isEqualTo: _hotelController
+                                                .shops[index].ownerId)
+                                        .snapshots(),
+                                    builder: (context,
+                                        AsyncSnapshot<QuerySnapshot> sp) {
+                                      if (!sp.hasData) return Text('loading');
+                                      final data = sp.data!.docs[0];
+
+                                      return CircleAvatar(
+                                        radius: 8,
+                                        backgroundColor:
+                                            data['status'] == 'open'
+                                                ? Colors.green
+                                                : Colors.red,
+                                      );
+                                    },
+                                  )
+                                : CircularProgressIndicator(),
+                            onTap: () {
+                              if (_hotelController.shops[index].status ==
+                                  'open')
+                                Get.to(() => DishScreen(
+                                      img: _hotelController.shops[index].img!,
+                                      id: _hotelController
+                                          .shops[index].ownerId!,
+                                      name: _hotelController.shops[index].name!,
+                                    ));
+                              else
+                                Get.snackbar('Restaurant is Closed',
+                                    'The restaurant you are trying to reach is not at service now , try again later');
+                            },
                           ),
-                          trailing: !_hotelController.loading.value
-                              ? StreamBuilder(
-                                  stream: FirebaseFirestore.instance
-                                      .collection('hotels')
-                                      .where('ownerId',
-                                          isEqualTo: _hotelController
-                                              .shops[index].ownerId)
-                                      .snapshots(),
-                                  builder: (context,
-                                      AsyncSnapshot<QuerySnapshot> sp) {
-                                    if (!sp.hasData) return Text('loading');
-                                    final data = sp.data!.docs[0];
-                                    return CircleAvatar(
-                                      radius: 8,
-                                      backgroundColor: data['status'] == 'open'
-                                          ? Colors.green
-                                          : Colors.red,
-                                    );
-                                  },
-                                )
-                              : CircularProgressIndicator(),
-                          onTap: () {
-                            if (_hotelController.shops[index].status == 'open')
-                              Get.to(() => DishScreen(
-                                    img: _hotelController.shops[index].img,
-                                    id: _hotelController.shops[index].ownerId,
-                                    name: _hotelController.shops[index].name,
-                                  ));
-                            else
-                              Get.snackbar('Restaurant is Closed',
-                                  'The restaurant you are trying to reach is not at service now , try again later');
-                          },
                         );
                       }),
                 )),

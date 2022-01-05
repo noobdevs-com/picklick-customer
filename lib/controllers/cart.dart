@@ -5,16 +5,17 @@ import 'package:picklick_customer/models/offerDish.dart';
 
 class CartController extends GetxController {
   final cart = <Dish>[].obs;
+  final cartItemName = <String>[].obs;
   final price = 0.0.obs;
 
-  void addDishtoCart(Dish dish) {
+  void addDishtoCart(Dish dish, int quantity) {
     cart.add(dish);
-    price.value += dish.price;
+    price.value = price.value + (dish.price * quantity);
   }
 
-  void removeDishtoCart(Dish dish) {
+  void removeDishfromCart(Dish dish, int quantity) {
     cart.remove(dish);
-    price.value -= dish.price;
+    price.value = price.value - (dish.price * quantity);
   }
 
   int getCartItemCount() {

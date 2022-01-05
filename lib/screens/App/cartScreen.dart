@@ -19,6 +19,7 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         title: Text('My Cart'),
       ),
       body: _cartController.offerCart.length + _cartController.cart.length == 0
@@ -52,135 +53,169 @@ class _CartScreenState extends State<CartScreen> {
                 ),
               ),
             )
-          : Obx(() => Column(
-                children: [
-                  ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: _cartController.cart.length,
-                      itemBuilder: (context, index) {
-                        final cart = _cartController.cart[index];
-                        return Padding(
-                          padding: const EdgeInsets.fromLTRB(
-                            4,
-                            4,
-                            4,
-                            0,
-                          ),
-                          child: Card(
-                            child: ListTile(
-                              title: Text(cart.name),
-                              subtitle: Text('₹ ${cart.price * cart.quantity}'),
-                              trailing: SizedBox(
-                                width: 160,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    IconButton(
-                                        onPressed: () {
-                                          if (cart.quantity > 1) {
-                                            cart.setQuantity(-1);
-                                            setState(() {
-                                              _cartController.price.value -=
-                                                  cart.price;
-                                            });
-                                          }
-                                        },
-                                        icon: Icon(Icons.remove)),
-                                    Text(cart.quantity.toString()),
-                                    IconButton(
-                                        onPressed: () {
-                                          cart.setQuantity(1);
+          : WillPopScope(
+              onWillPop: () async {
+                _cartController.cart.map((element) => element.dishQuantity = 1);
+                return true;
+              },
+              child: SingleChildScrollView(
+                child: Obx(() => Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            physics: ScrollPhysics(
+                                parent: NeverScrollableScrollPhysics()),
+                            shrinkWrap: true,
+                            itemCount: _cartController.cart.length,
+                            itemBuilder: (context, index) {
+                              final cart = _cartController.cart[index];
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 4),
+                                child: Card(
+                                  elevation: 0.5,
+                                  child: ListTile(
+                                    title: Text(cart.name),
+                                    subtitle:
+                                        Text('₹ ${cart.price * cart.quantity}'),
+                                    trailing: SizedBox(
+                                      width: 160,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          IconButton(
+                                              onPressed: () {
+                                                if (cart.quantity > 1) {
+                                                  cart.setQuantity(-1);
+                                                  setState(() {
+                                                    _cartController.price
+                                                        .value -= cart.price;
+                                                  });
+                                                }
+                                              },
+                                              icon: Icon(Icons.remove)),
+                                          Text(cart.quantity.toString()),
+                                          IconButton(
+                                              onPressed: () {
+                                                cart.setQuantity(1);
 
-                                          setState(() {
-                                            _cartController.price.value +=
-                                                cart.price;
-                                          });
-                                        },
-                                        icon: Icon(Icons.add)),
-                                    IconButton(
-                                        onPressed: () {
-                                          _cartController
-                                              .removeDishtoCart(cart);
-                                        },
-                                        icon: Icon(Icons.delete))
-                                  ],
+                                                setState(() {
+                                                  _cartController.price.value +=
+                                                      cart.price;
+                                                });
+                                              },
+                                              icon: Icon(Icons.add)),
+                                          IconButton(
+                                              onPressed: () {
+                                                _cartController
+                                                    .removeDishfromCart(
+                                                        cart, cart.quantity);
+                                              },
+                                              icon: Icon(Icons.delete))
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }),
-                  ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: _cartController.offerCart.length,
-                      itemBuilder: (context, index) {
-                        final offercart = _cartController.offerCart[index];
-                        return Padding(
-                          padding: const EdgeInsets.fromLTRB(
-                            4,
-                            4,
-                            4,
-                            0,
-                          ),
-                          child: Card(
-                            child: ListTile(
-                              title: Text(offercart.name),
-                              subtitle: Text(
-                                  '₹ ${offercart.discountedPrice * offercart.quantity}'),
-                              trailing: SizedBox(
-                                width: 160,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    IconButton(
-                                        onPressed: () {
-                                          if (offercart.quantity > 1) {
-                                            offercart.setQuantity(-1);
-                                            setState(() {
-                                              _cartController.price.value -=
-                                                  offercart.discountedPrice;
-                                            });
-                                          }
-                                        },
-                                        icon: Icon(Icons.remove)),
-                                    Text(offercart.quantity.toString()),
-                                    IconButton(
-                                        onPressed: () {
-                                          offercart.setQuantity(1);
+                              );
+                            }),
+                        ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            physics: ScrollPhysics(
+                                parent: NeverScrollableScrollPhysics()),
+                            shrinkWrap: true,
+                            itemCount: _cartController.offerCart.length,
+                            itemBuilder: (context, index) {
+                              final offercart =
+                                  _cartController.offerCart[index];
+                              return Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  4,
+                                  4,
+                                  4,
+                                  0,
+                                ),
+                                child: Card(
+                                  child: ListTile(
+                                    title: Text(offercart.name),
+                                    subtitle: Text(
+                                        '₹ ${offercart.discountedPrice * offercart.quantity}'),
+                                    trailing: SizedBox(
+                                      width: 160,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          IconButton(
+                                              onPressed: () {
+                                                if (offercart.quantity > 1) {
+                                                  offercart.setQuantity(-1);
+                                                  setState(() {
+                                                    _cartController
+                                                            .price.value -=
+                                                        offercart
+                                                            .discountedPrice;
+                                                  });
+                                                }
+                                              },
+                                              icon: Icon(Icons.remove)),
+                                          Text(offercart.quantity.toString()),
+                                          IconButton(
+                                              onPressed: () {
+                                                offercart.setQuantity(1);
 
-                                          setState(() {
-                                            _cartController.price.value +=
-                                                offercart.discountedPrice;
-                                          });
-                                        },
-                                        icon: Icon(Icons.add)),
-                                    IconButton(
-                                        onPressed: () {
-                                          _cartController
-                                              .removeOfferDishtoCart(offercart);
-                                        },
-                                        icon: Icon(Icons.delete))
-                                  ],
+                                                setState(() {
+                                                  _cartController.price.value +=
+                                                      offercart.discountedPrice;
+                                                });
+                                              },
+                                              icon: Icon(Icons.add)),
+                                          IconButton(
+                                              onPressed: () {
+                                                _cartController
+                                                    .removeOfferDishtoCart(
+                                                        offercart);
+                                              },
+                                              icon: Icon(Icons.delete))
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }),
-                ],
-              )),
+                              );
+                            }),
+                      ],
+                    )),
+              ),
+            ),
       bottomNavigationBar: BottomAppBar(
+        elevation: 0,
+        color: Colors.white,
         child: Row(
           children: [
-            Obx(() => Expanded(
+            SizedBox(
+              width: 8,
+            ),
+            Obx(() => Flexible(
                 flex: 1,
-                child: Text(
-                  '  TOTAL :  ₹ ${_cartController.price.value}',
-                  style: TextStyle(fontSize: 20),
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(4)),
+                      color: Colors.red),
+                  height: 45,
+                  child: Center(
+                    child: Text(
+                      '  TOTAL :  ₹ ${_cartController.price.value}',
+                      style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white),
+                    ),
+                  ),
                 ))),
-            Expanded(
+            Flexible(
               flex: 1,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -197,6 +232,7 @@ class _CartScreenState extends State<CartScreen> {
                       : null,
                   child: Text('Proceed'),
                   style: ElevatedButton.styleFrom(
+                    primary: Color(0xFFCFB840),
                     padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   ),
                 ),

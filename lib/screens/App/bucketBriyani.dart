@@ -17,7 +17,7 @@ class BucketBriyani extends StatefulWidget {
 
 class _BucketBriyaniState extends State<BucketBriyani>
     with TickerProviderStateMixin {
-  String bucket = 'Mini Bucket';
+  String? bucket;
   late int price;
   TextEditingController descriptionController = TextEditingController();
   String? customerName;
@@ -30,6 +30,11 @@ class _BucketBriyaniState extends State<BucketBriyani>
   int offer = 1;
   String img = '';
   bool visible = true;
+  bool? miniAvail;
+  bool? familyAvail;
+  bool? mediumAvail;
+  bool? largeAvail;
+
   final fCMNotification = FCMNotification();
   late final AnimationController _controller;
 
@@ -79,6 +84,10 @@ class _BucketBriyaniState extends State<BucketBriyani>
         offer = data['offer'];
         img = data['posterImg'];
         visible = data['visible'];
+        miniAvail = data['miniAvail'];
+        familyAvail = data['familyAvail'];
+        mediumAvail = data['mediumAvail'];
+        largeAvail = data['largeAvail'];
       });
     });
   }
@@ -93,7 +102,7 @@ class _BucketBriyaniState extends State<BucketBriyani>
                   ? price = mediumBucket
                   : selectedBucket == 'L'
                       ? price = largeBucket
-                      : price = 0;
+                      : price = -1;
     });
     setState(() {
       selectedBucket == 'Mi'
@@ -122,7 +131,7 @@ class _BucketBriyaniState extends State<BucketBriyani>
     });
   }
 
-  String selectedBucket = 'Mi';
+  String? selectedBucket;
 
   @override
   Widget build(BuildContext context) {
@@ -195,115 +204,145 @@ class _BucketBriyaniState extends State<BucketBriyani>
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Column(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          selectedBucket = 'Mi';
-                                        });
-                                      },
-                                      child: Card(
-                                          shadowColor: Color(0xFFCFB840),
-                                          elevation:
-                                              selectedBucket == 'Mi' ? 10 : 0,
-                                          shape: KbbcardShape,
-                                          child: CircleAvatar(
-                                            backgroundColor: Colors.white,
-                                            radius: 25,
-                                            child: Text(
-                                              'Mi',
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold),
+                                miniAvail!
+                                    ? Expanded(
+                                        child: Column(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  selectedBucket = 'Mi';
+                                                  print(price);
+                                                });
+                                              },
+                                              child: Card(
+                                                  shadowColor:
+                                                      Color(0xFFCFB840),
+                                                  elevation:
+                                                      selectedBucket == 'Mi'
+                                                          ? 10
+                                                          : 0,
+                                                  shape: KbbcardShape,
+                                                  child: CircleAvatar(
+                                                    backgroundColor:
+                                                        selectedBucket == 'Mi'
+                                                            ? Color(0xFFCFB840)
+                                                            : Colors.white,
+                                                    radius: 25,
+                                                    backgroundImage: AssetImage(
+                                                        'assets/appMini.png'),
+                                                  )),
                                             ),
-                                          )),
-                                    ),
-                                    Text('Mini')
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          selectedBucket = 'F';
-                                        });
-                                      },
-                                      child: Card(
-                                        shadowColor: Color(0xFFCFB840),
-                                        elevation:
-                                            selectedBucket == 'F' ? 10 : 0,
-                                        shape: KbbcardShape,
-                                        child: CircleAvatar(
-                                          backgroundColor: Colors.white,
-                                          radius: 25,
-                                          child: Text(
-                                            'F',
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold),
-                                          ),
+                                            Text('Mini')
+                                          ],
                                         ),
+                                      )
+                                    : SizedBox(
+                                        width: 0,
                                       ),
-                                    ),
-                                    Text('Family')
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          selectedBucket = 'Md';
-                                        });
-                                      },
-                                      child: Card(
-                                          shadowColor: Color(0xFFCFB840),
-                                          elevation:
-                                              selectedBucket == 'Md' ? 10 : 0,
-                                          shape: KbbcardShape,
-                                          child: CircleAvatar(
-                                            backgroundColor: Colors.white,
-                                            radius: 25,
-                                            child: Text(
-                                              'Md',
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold),
+                                familyAvail!
+                                    ? Expanded(
+                                        child: Column(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  selectedBucket = 'F';
+                                                });
+                                              },
+                                              child: Card(
+                                                shadowColor: Color(0xFFCFB840),
+                                                elevation: selectedBucket == 'F'
+                                                    ? 10
+                                                    : 0,
+                                                shape: KbbcardShape,
+                                                child: CircleAvatar(
+                                                    backgroundColor:
+                                                        selectedBucket == 'F'
+                                                            ? Color(0xFFCFB840)
+                                                            : Colors.white,
+                                                    radius: 25,
+                                                    backgroundImage: AssetImage(
+                                                        'assets/fam.png')),
+                                              ),
                                             ),
-                                          )),
-                                    ),
-                                    Text('Medium')
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          selectedBucket = 'L';
-                                        });
-                                      },
-                                      child: Card(
-                                          shadowColor: Color(0xFFCFB840),
-                                          elevation:
-                                              selectedBucket == 'L' ? 10 : 0,
-                                          shape: KbbcardShape,
-                                          child: CircleAvatar(
-                                            backgroundColor: Colors.white,
-                                            radius: 25,
-                                            child: Text(
-                                              'L',
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold),
+                                            Text('Family')
+                                          ],
+                                        ),
+                                      )
+                                    : SizedBox(
+                                        width: 0,
+                                      ),
+                                mediumAvail!
+                                    ? Expanded(
+                                        child: Column(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  selectedBucket = 'Md';
+                                                });
+                                              },
+                                              child: Card(
+                                                  shadowColor:
+                                                      Color(0xFFCFB840),
+                                                  elevation:
+                                                      selectedBucket == 'Md'
+                                                          ? 10
+                                                          : 0,
+                                                  shape: KbbcardShape,
+                                                  child: CircleAvatar(
+                                                      backgroundColor:
+                                                          selectedBucket == 'Md'
+                                                              ? Color(
+                                                                  0xFFCFB840)
+                                                              : Colors.white,
+                                                      radius: 25,
+                                                      backgroundImage: AssetImage(
+                                                          'assets/appMedium.png'))),
                                             ),
-                                          )),
-                                    ),
-                                    Text('Large')
-                                  ],
-                                )
+                                            Text('Medium')
+                                          ],
+                                        ),
+                                      )
+                                    : SizedBox(
+                                        width: 0,
+                                      ),
+                                largeAvail!
+                                    ? Expanded(
+                                        child: Column(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  selectedBucket = 'L';
+                                                });
+                                              },
+                                              child: Card(
+                                                  shadowColor:
+                                                      Color(0xFFCFB840),
+                                                  elevation:
+                                                      selectedBucket == 'L'
+                                                          ? 10
+                                                          : 0,
+                                                  shape: KbbcardShape,
+                                                  child: CircleAvatar(
+                                                      backgroundColor:
+                                                          selectedBucket == 'L'
+                                                              ? Color(
+                                                                  0xFFCFB840)
+                                                              : Colors.white,
+                                                      radius: 25,
+                                                      backgroundImage: AssetImage(
+                                                          'assets/appLarge.png'))),
+                                            ),
+                                            Text('Large')
+                                          ],
+                                        ),
+                                      )
+                                    : SizedBox(
+                                        width: 0,
+                                      )
                               ],
                             ),
                             SizedBox(
@@ -313,7 +352,9 @@ class _BucketBriyaniState extends State<BucketBriyani>
                               color: Colors.white70,
                               elevation: 0,
                               child: ListTile(
-                                title: Text('Price :    ₹ $price'),
+                                title: price == -1
+                                    ? Text('--Select a bucket--')
+                                    : Text('Price :    ₹ $price'),
                               ),
                             ),
                             discription != ''
@@ -364,57 +405,70 @@ class _BucketBriyaniState extends State<BucketBriyani>
                               height: 40,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  Get.defaultDialog(
-                                    title: bucket,
-                                    middleText: descriptionController.text,
-                                    onConfirm: () async {
-                                      Navigator.of(context).pop();
-                                      final user =
-                                          FirebaseAuth.instance.currentUser!;
-                                      await FirebaseFirestore.instance
-                                          .collection('bucketOrder')
-                                          .doc(user.uid)
-                                          .set({
-                                        'uid': user.uid,
-                                        'bucket': bucket,
-                                        'price': (price - (price / 100 * offer))
-                                            .round(),
-                                        'discription':
-                                            descriptionController.text,
-                                        'orderedAt':
-                                            Timestamp.fromDate(DateTime.now()),
-                                        'orderStatus':
-                                            OrderStatus.pending.toString(),
-                                        'customerName': customerName,
-                                        'customerAddress': customerAddress,
-                                        'customerPhoneNumber': user.phoneNumber,
-                                      }, SetOptions(merge: true)).whenComplete(
-                                              () {
-                                        Get.bottomSheet(
-                                          Lottie.asset(
-                                              'assets/confirmAnimation.json',
-                                              fit: BoxFit.fill,
-                                              controller: _controller,
-                                              onLoaded: (comp) {
-                                            _controller.duration =
-                                                comp.duration;
-                                            _controller
-                                                .forward()
-                                                .whenComplete(() {
-                                              _controller.reverse();
-                                              Navigator.of(context).pop();
-                                            });
-                                          }),
-                                        );
-                                        adminToken.forEach((e) => fCMNotification
-                                            .createOrderNotification(
-                                                e,
-                                                'Incoming Order from $customerName',
-                                                'You have a pending bucke order from $customerName !'));
-                                      });
-                                    },
-                                    textConfirm: 'Confirm Order',
-                                  );
+                                  if (price == -1) {
+                                    Get.defaultDialog(
+                                        title: 'Select a Bucket',
+                                        middleText:
+                                            'Please Select a bucket and then click place order.');
+                                  } else {
+                                    Get.defaultDialog(
+                                      title: bucket!,
+                                      middleText: descriptionController.text,
+                                      onConfirm: () async {
+                                        Navigator.of(context).pop();
+                                        final user =
+                                            FirebaseAuth.instance.currentUser!;
+                                        await FirebaseFirestore.instance
+                                            .collection('bucketOrder')
+                                            .doc(user.uid)
+                                            .set(
+                                                {
+                                              'uid': user.uid,
+                                              'bucket': bucket,
+                                              'price': (price -
+                                                      (price / 100 * offer))
+                                                  .round(),
+                                              'discription':
+                                                  descriptionController.text,
+                                              'orderedAt': Timestamp.fromDate(
+                                                  DateTime.now()),
+                                              'orderStatus': OrderStatus.pending
+                                                  .toString(),
+                                              'customerName': customerName,
+                                              'customerAddress':
+                                                  customerAddress,
+                                              'customerPhoneNumber':
+                                                  user.phoneNumber,
+                                            },
+                                                SetOptions(
+                                                    merge: true)).whenComplete(
+                                                () {
+                                          Get.bottomSheet(
+                                            Lottie.asset(
+                                                'assets/confirmAnimation.json',
+                                                fit: BoxFit.fill,
+                                                controller: _controller,
+                                                onLoaded: (comp) {
+                                              _controller.duration =
+                                                  comp.duration;
+                                              _controller
+                                                  .forward()
+                                                  .whenComplete(() {
+                                                _controller.reverse();
+                                                Navigator.of(context).pop();
+                                              });
+                                            }),
+                                          );
+                                          adminToken.forEach((e) => fCMNotification
+                                              .createOrderNotification(
+                                                  e,
+                                                  'Incoming Order from $customerName',
+                                                  'You have a pending bucke order from $customerName !'));
+                                        });
+                                      },
+                                      textConfirm: 'Confirm Order',
+                                    );
+                                  }
                                 },
                                 child: Text('Place Order'),
                               ),

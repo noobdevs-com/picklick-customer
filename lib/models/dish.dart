@@ -13,6 +13,7 @@ class Dish extends GetxController {
   int dishQuantity;
 
   final _quantity = 1.obs;
+
   int get quantity => _quantity.value;
   setQuantity(int value) {
     _quantity.value += value;

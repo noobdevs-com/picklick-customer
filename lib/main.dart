@@ -36,29 +36,35 @@ class _MyAppState extends State<MyApp> {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          appBarTheme: AppBarTheme(
-              color: Color(0xFFCFB840),
-              iconTheme: IconThemeData(color: Colors.black),
-              foregroundColor: Colors.black),
-          cardTheme: CardTheme(
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: <TargetPlatform, PageTransitionsBuilder>{
+            TargetPlatform.android: ZoomPageTransitionsBuilder(),
+          },
+        ),
+        appBarTheme: AppBarTheme(
+            color: Color(0xFFCFB840),
+            iconTheme: IconThemeData(color: Colors.black),
+            foregroundColor: Colors.black),
+        cardTheme: CardTheme(
+          elevation: 2,
+          color: Color(0xFfF0EBCC).withOpacity(0.825),
+        ),
+        primaryColor: Color(0xFFCFB840),
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        scaffoldBackgroundColor: Color(0xFFF0EBCC),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
             elevation: 2,
-            color: Color(0xFfF0EBCC).withOpacity(0.825),
-          ),
-          primaryColor: Color(0xFFCFB840),
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-          scaffoldBackgroundColor: Color(0xFFF0EBCC),
-          floatingActionButtonTheme: FloatingActionButtonThemeData(
-              elevation: 2,
-              backgroundColor: Color(0xFFCFB840),
-              foregroundColor: Colors.black),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(
-            primary: Color(0xFFCFB840),
-            elevation: 0,
-          )),
-          textSelectionTheme: TextSelectionThemeData(
-            cursorColor: Colors.black,
-          )),
+            backgroundColor: Color(0xFFCFB840),
+            foregroundColor: Colors.black),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+          primary: Color(0xFFCFB840),
+          elevation: 0,
+        )),
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Colors.black,
+        ),
+      ),
       initialRoute: '/',
       routes: {
         '/': (context) => Wrapper(),

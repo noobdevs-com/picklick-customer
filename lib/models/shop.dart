@@ -1,16 +1,27 @@
-class Shop {
-  Shop(
-      {required this.name,
-      required this.location,
-      required this.img,
-      required this.ownerId,
-      required this.status});
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-  String name;
-  String location;
-  String img;
-  String ownerId;
-  String status;
+class Shop {
+  Shop({this.name, this.location, this.img, this.ownerId, this.status});
+
+  String? name;
+  String? location;
+  String? img;
+  String? ownerId;
+  String? status;
+
+  List<Shop> dataListFromSnapshot(QuerySnapshot querySnapshot) {
+    return querySnapshot.docs.map((snapshot) {
+      final Map<String, dynamic> dataMap =
+          snapshot.data() as Map<String, dynamic>;
+
+      return Shop(
+          status: dataMap['status']!,
+          img: dataMap['img']!,
+          name: dataMap['name']!,
+          location: dataMap['location']!,
+          ownerId: dataMap['ownerId']!);
+    }).toList();
+  }
 
   factory Shop.toJson(json) {
     return Shop(

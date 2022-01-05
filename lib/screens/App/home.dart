@@ -1,7 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:picklick_customer/screens/App/christmasTikect.dart';
+
 import 'package:picklick_customer/services/local_notification.dart';
 import 'package:timezone/data/latest.dart';
 import 'package:geolocator/geolocator.dart';
@@ -100,23 +100,9 @@ class _HomeState extends State<Home> {
   // }
 
   final List<Tab> myTabs = <Tab>[
+    Tab(child: Icon(Icons.restaurant)),
     Tab(
-      child: Text(
-        'Christmas Tickets',
-        textAlign: TextAlign.center,
-      ),
-    ),
-    Tab(
-      child: Text(
-        'Shop',
-        textAlign: TextAlign.center,
-      ),
-    ),
-    Tab(
-      child: Text(
-        'Specials',
-        textAlign: TextAlign.center,
-      ),
+      child: Icon(Icons.festival),
     ),
   ];
 
@@ -163,34 +149,43 @@ class _HomeState extends State<Home> {
                     size: 27,
                   )),
               SizedBox(
+                width: 10,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'MISTER',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  Text(
+                    'PICKLICK',
+                    style: TextStyle(fontSize: 16),
+                  )
+                ],
+              ),
+              SizedBox(
                 width: 20,
               ),
-              Image.asset(
-                'assets/logo.png',
-              )
             ],
           ),
           body: TabBarView(children: [
-            ChristmasTicket(),
             ShopTile(),
             BucketBriyani(),
           ]),
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 20),
-            child: FloatingActionButton(
-              elevation: 0,
-              tooltip: 'Contact Us On WhatsApp',
-              backgroundColor: Color(0xFFF0EBCC),
+          floatingActionButton: InkWell(
+            child: Container(
+              height: 60,
+              width: 60,
               child: Image.asset(
                 'assets/whatsapplogo.png',
-                fit: BoxFit.contain,
               ),
-              onPressed: () {
-                openwhatsapp();
-                // notification.showNotifications(
-                //     1, 'Hello Dhostho', 'You Have Pressed This Button', 500);
-              },
             ),
+            onTap: () {
+              openwhatsapp();
+              // notification.showNotifications(
+              //     1, 'Hello Dhostho', 'You Have Pressed This Button', 500);
+            },
           ),
         ),
       ),

@@ -7,6 +7,7 @@ import 'package:picklick_customer/screens/App/bucketOrder.dart';
 
 import 'package:picklick_customer/screens/App/loading.dart';
 import 'package:picklick_customer/screens/App/orderScreen.dart';
+import 'package:picklick_customer/screens/App/test.dart';
 import 'package:picklick_customer/screens/Auth/authenticationWrapper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -27,6 +28,8 @@ class MenuDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
+            curve: Curves.fastLinearToSlowEaseIn,
+            duration: Duration(seconds: 1),
             decoration: BoxDecoration(
               color: Color(0xFFF0EBCC),
             ),

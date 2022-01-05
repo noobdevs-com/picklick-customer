@@ -66,7 +66,7 @@ class _OfferDishTileState extends State<OfferDishTile> {
                         onPressed: () {
                           if (_cartController.offerCart
                               .contains(_controller.offerDishes[index])) {
-                            return Get.snackbar("Item already in cart",
+                            Get.snackbar("Item already in cart",
                                 "The item you have choosen is already in cart.");
                           }
                           _cartController.addOfferDishtoCart(
