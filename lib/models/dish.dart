@@ -12,20 +12,16 @@ class Dish extends GetxController {
   String img;
   int dishQuantity;
 
-  final _quantity = 1.obs;
+  final quantity = 1.obs;
 
-  int get quantity => _quantity.value;
-  setQuantity(int value) {
-    _quantity.value += value;
-  }
+  int get dishquantity => quantity.value;
 
   factory Dish.toJson(json) {
-    print(json);
     late int quantity;
     try {
       quantity = json['quantity'];
     } catch (e) {
-      quantity = 0;
+      quantity = 1;
     }
     return Dish(
       name: json['name'],

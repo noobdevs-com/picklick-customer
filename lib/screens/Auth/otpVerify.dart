@@ -5,11 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-
 import 'package:picklick_customer/screens/App/home.dart';
-
 import 'package:picklick_customer/services/fcm_notification.dart';
-
 import 'package:pin_input_text_field/pin_input_text_field.dart';
 
 import 'fillUserDetails.dart';
@@ -250,7 +247,6 @@ class _OTPScreenState extends State<OTPScreen> {
                                   startTime = 30;
                                 });
                               startTimer();
-                              print(widget.verificationId);
                             },
                             icon: Icon(
                               Icons.restore,

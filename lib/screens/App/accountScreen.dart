@@ -1,12 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-
 import 'package:picklick_customer/constants/constants.dart';
 import 'package:picklick_customer/constants/valueConstants.dart';
+import 'package:picklick_customer/controllers/location.dart';
 import 'package:picklick_customer/models/user.dart';
 import 'package:picklick_customer/screens/App/loading.dart';
+import 'package:picklick_customer/services/geolocatrionservice.dart';
+
+import 'package:geocoding/geocoding.dart';
 
 class MyAccount extends StatefulWidget {
   const MyAccount({Key? key}) : super(key: key);
@@ -25,6 +29,11 @@ class _MyAccountState extends State<MyAccount> {
 
   final _formKey = GlobalKey<FormState>();
 
+  bool loading = false;
+  final geoLocationService = GeolocationService();
+
+  final locationController = Get.put(LocationController());
+
   Widget profileView() {
     return StreamBuilder(
         stream: ref.snapshots(),
@@ -41,6 +50,17 @@ class _MyAccountState extends State<MyAccount> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              Row(
+                                children: [
+                                  IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          Navigator.of(context).pop();
+                                        });
+                                      },
+                                      icon: Icon(Icons.arrow_back))
+                                ],
+                              ),
                               CircleAvatar(
                                 radius: 50,
                                 backgroundColor: Colors.white,
@@ -107,15 +127,15 @@ class _MyAccountState extends State<MyAccount> {
                     ),
                   )
                 ]),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 50),
-                      child: Row(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Row(
                         children: [
                           Icon(
                             Icons.email,
@@ -124,21 +144,21 @@ class _MyAccountState extends State<MyAccount> {
                           SizedBox(
                             width: 18,
                           ),
-                          Text(data.email,
-                              textAlign: TextAlign.justify,
-                              style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.black54,
-                              )),
+                          Flexible(
+                            child: Text(data.email,
+                                textAlign: TextAlign.justify,
+                                overflow: TextOverflow.fade,
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.black54,
+                                )),
+                          ),
                         ],
                       ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 50),
-                      child: Row(
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
                         children: [
                           Icon(
                             Icons.phone,
@@ -147,23 +167,22 @@ class _MyAccountState extends State<MyAccount> {
                           SizedBox(
                             width: 18,
                           ),
-                          Text(
-                              FirebaseAuth.instance.currentUser!.phoneNumber
-                                  .toString(),
-                              textAlign: TextAlign.justify,
-                              style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.black54,
-                              )),
+                          Expanded(
+                            child: Text(
+                                FirebaseAuth.instance.currentUser!.phoneNumber
+                                    .toString(),
+                                textAlign: TextAlign.justify,
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.black54,
+                                )),
+                          ),
                         ],
                       ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 50),
-                      child: Row(
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
                         children: [
                           Icon(
                             Icons.location_city,
@@ -172,28 +191,43 @@ class _MyAccountState extends State<MyAccount> {
                           SizedBox(
                             width: 18,
                           ),
-                          Text(data.address,
-                              textAlign: TextAlign.justify,
-                              style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.black54,
-                              )),
+                          Flexible(
+                            child: Text(data.address,
+                                textAlign: TextAlign.justify,
+                                maxLines: null,
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.black54,
+                                )),
+                          ),
                         ],
                       ),
-                    ),
-                    SizedBox(
-                      height: 50,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          currentPage = ProfileVeiw.PROFILE_EDIT;
-                        });
-                      },
-                      child: Text('Edit Details'),
-                      style: kElevatedButtonStyle,
-                    )
-                  ],
+                      SizedBox(
+                        height: 50,
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Get.defaultDialog(
+                              cancelTextColor: Colors.black45,
+                              confirmTextColor: Colors.white,
+                              buttonColor: Color(0xFFCFB840),
+                              title: 'Edit Profile ?',
+                              middleText:
+                                  'Do you want to edit your information ?',
+                              textCancel: 'No',
+                              textConfirm: 'Yes',
+                              onConfirm: () {
+                                Navigator.pop(context);
+                                setState(() {
+                                  currentPage = ProfileVeiw.PROFILE_EDIT;
+                                });
+                              });
+                        },
+                        child: Text('Edit Details'),
+                        style: kElevatedButtonStyle,
+                      )
+                    ],
+                  ),
                 ),
               ],
             );
@@ -207,7 +241,7 @@ class _MyAccountState extends State<MyAccount> {
   final emailController = TextEditingController();
   final addressController = TextEditingController();
 
-  bool loading = false;
+  bool btnLooading = false;
 
   Widget profileEdit() {
     return Form(
@@ -215,14 +249,17 @@ class _MyAccountState extends State<MyAccount> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-              height: 5,
-              child: loading == true
-                  ? LinearProgressIndicator(
-                      color: Colors.black,
-                      backgroundColor: Colors.white,
-                    )
-                  : null),
+          Row(
+            children: [
+              IconButton(
+                  onPressed: () {
+                    setState(() {
+                      currentPage = ProfileVeiw.PROFILE_VEIW;
+                    });
+                  },
+                  icon: Icon(Icons.arrow_back))
+            ],
+          ),
           Center(
             child: SizedBox(
               width: 350,
@@ -298,64 +335,144 @@ class _MyAccountState extends State<MyAccount> {
                       ),
                     ),
                   ),
-                  Container(
-                    height: 50,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: TextFormField(
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Enter Address';
-                          }
-                          return null;
-                        },
-                        maxLines: null,
-                        keyboardType: TextInputType.text,
-                        controller: addressController,
-                        decoration: InputDecoration(
-                            enabledBorder: KTFBorderStyle,
-                            labelStyle: TextStyle(color: Colors.black),
-                            focusedBorder: KTFFocusedBorderStyle,
-                            hintText: 'Enter Your Address',
-                            labelText: 'Address :',
-                            border: KTFBorderStyle),
-                      ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width - 15,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 4,
+                          child: Container(
+                            height: 100,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8),
+                              child: TextFormField(
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Enter Address';
+                                  }
+                                  return null;
+                                },
+                                maxLines: null,
+                                minLines: 3,
+                                keyboardType: TextInputType.text,
+                                controller: addressController,
+                                decoration: InputDecoration(
+                                    enabledBorder: KTFBorderStyle,
+                                    labelStyle: TextStyle(color: Colors.black),
+                                    focusedBorder: KTFFocusedBorderStyle,
+                                    hintText: 'Enter Your Address',
+                                    labelText: 'Address :',
+                                    border: KTFBorderStyle),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Container(
+                            alignment: Alignment.center,
+                            height: 70,
+                            child: loading
+                                ? Center(
+                                    child: CircularProgressIndicator(
+                                      color: Color(0xFFCFB840),
+                                    ),
+                                  )
+                                : ElevatedButton(
+                                    onPressed: () async {
+                                      final status =
+                                          await Geolocator.checkPermission();
+                                      if (status ==
+                                              LocationPermission.whileInUse ||
+                                          status == LocationPermission.always) {
+                                        setState(() {
+                                          loading = true;
+                                        });
+
+                                        await geoLocationService
+                                            .getLocation()
+                                            .then((value) async {
+                                          final placemark =
+                                              await placemarkFromCoordinates(
+                                                  value.latitude,
+                                                  value.longitude);
+                                          print(placemark[0]
+                                              .subAdministrativeArea);
+
+                                          setState(() {
+                                            addressController.text =
+                                                '${placemark[0].name}, ${placemark[0].street}, ${placemark[0].locality}, ${placemark[0].subAdministrativeArea}, ${placemark[0].postalCode}';
+                                            loading = false;
+                                          });
+                                          print(locationController
+                                              .position!.latitude);
+                                        });
+                                      }
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Icon(Icons.edit_location),
+                                        Text(
+                                          'PICK',
+                                          style: TextStyle(
+                                              fontSize: 11,
+                                              overflow: TextOverflow.ellipsis),
+                                          textAlign: TextAlign.center,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                          ),
+                        )
+                      ],
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      if (!_formKey.currentState!.validate()) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Fill in all Mandotary Fields')),
-                        );
-                      } else {
-                        setState(() {
-                          loading = true;
-                        });
-                        final uid = FirebaseAuth.instance.currentUser!.uid;
-                        await FirebaseFirestore.instance
-                            .collection('userAddressBook')
-                            .doc(uid)
-                            .update({
-                          'name': nameController.text,
-                          'email': emailController.text,
-                          'address': addressController.text,
-                        }).whenComplete(() {
-                          user.updateDisplayName(nameController.text);
-                          setState(() {
-                            loading = false;
-                            nameController.clear();
-                            emailController.clear();
-                            addressController.clear();
-                            currentPage = ProfileVeiw.PROFILE_VEIW;
-                          });
-                        }).catchError((e) => Get.snackbar('Try Again', e));
-                      }
-                    },
-                    child: Text('Update Details'),
-                    style: kElevatedButtonStyle,
-                  )
+                  btnLooading
+                      ? CircularProgressIndicator(color: Color(0xFFCFB840))
+                      : ElevatedButton(
+                          onPressed: () async {
+                            if (!_formKey.currentState!.validate()) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('Fill in all Mandotary Fields')),
+                              );
+                            } else {
+                              setState(() {
+                                btnLooading = true;
+                              });
+                              final uid =
+                                  FirebaseAuth.instance.currentUser!.uid;
+                              await FirebaseFirestore.instance
+                                  .collection('userAddressBook')
+                                  .doc(uid)
+                                  .update({
+                                'name': nameController.text,
+                                'email': emailController.text,
+                                'address': addressController.text,
+                                'location': GeoPoint(
+                                    locationController.position!.latitude,
+                                    locationController.position!.longitude)
+                              }).whenComplete(() {
+                                user.updateDisplayName(nameController.text);
+                                setState(() {
+                                  btnLooading = false;
+                                  nameController.clear();
+                                  emailController.clear();
+                                  addressController.clear();
+                                  currentPage = ProfileVeiw.PROFILE_VEIW;
+                                });
+                              }).catchError(
+                                      (e) => Get.snackbar('Try Again', e));
+                            }
+                          },
+                          child: Text('Update Details'),
+                          style: kElevatedButtonStyle,
+                        )
                 ],
               ),
             ),
@@ -363,6 +480,13 @@ class _MyAccountState extends State<MyAccount> {
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    locationController.setCurrentlocation();
   }
 
   @override

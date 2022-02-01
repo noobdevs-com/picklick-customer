@@ -3,14 +3,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 import 'package:picklick_customer/constants/valueConstants.dart';
 import 'package:picklick_customer/screens/App/home.dart';
+import 'package:picklick_customer/services/fcm_notification.dart';
 
 class UserDetails extends StatelessWidget {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final addressController = TextEditingController();
+  GetStorage getStorage = GetStorage();
+  FCMNotification fcmNotification = FCMNotification();
 
   final ref = FirebaseFirestore.instance.collection('userAddressBook');
 
@@ -69,6 +73,9 @@ class UserDetails extends StatelessWidget {
                     'email': emailController.text,
                     'address': addressController.text,
                     'uid': user.uid,
+                    'notificationToken': getStorage.read('deviceToken') == null
+                        ? fcmNotification.updateDeviceToken()
+                        : getStorage.read('deviceToken')
                   }, SetOptions(merge: true)).whenComplete(() {
                     user.updateDisplayName('${nameController.text}');
                     Get.offAll(() => Home());

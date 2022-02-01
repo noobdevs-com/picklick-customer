@@ -72,7 +72,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                   onChanged: (String t) {
                     if (t == "") return;
-                    getDishes(t.toUpperCase());
+                    getDishes(t);
                   },
                   autofocus: true,
                   style: TextStyle(

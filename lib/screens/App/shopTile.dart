@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:animations/animations.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:picklick_customer/controllers/hotel.dart';
 import 'package:picklick_customer/screens/App/dishScreen.dart';
 import 'package:picklick_customer/screens/App/loading.dart';
@@ -12,6 +13,7 @@ class ShopTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    GetStorage favStorage = GetStorage();
     return Scaffold(
       body: Obx(() => _hotelController.loading.value
           ? Loading()
@@ -30,6 +32,45 @@ class ShopTile extends StatelessWidget {
                           elevation: 2,
                           margin: EdgeInsets.all(2),
                           child: ListTile(
+                            onLongPress: () {
+                              final inFav = favStorage
+                                  .read(_hotelController.shops[index].ownerId!);
+
+                              if (inFav == null) {
+                                Get.defaultDialog(
+                                    cancelTextColor: Colors.black45,
+                                    confirmTextColor: Colors.white,
+                                    buttonColor: Color(0xFFCFB840),
+                                    title: 'Add to favorites ?',
+                                    middleText:
+                                        'Do you want to add ${_hotelController.shops[index].name!} to your favourites list ?',
+                                    textCancel: 'No',
+                                    textConfirm: 'Add',
+                                    onConfirm: () {
+                                      favStorage.write(
+                                          _hotelController
+                                              .shops[index].ownerId!,
+                                          _hotelController.shops[index].name!);
+                                      Navigator.of(context).pop();
+                                    });
+                              }
+                              if (inFav != null) {
+                                Get.defaultDialog(
+                                    cancelTextColor: Colors.black45,
+                                    confirmTextColor: Colors.white,
+                                    buttonColor: Colors.red,
+                                    title: 'Remove from favorites ?',
+                                    middleText:
+                                        'Do you want to remove ${_hotelController.shops[index].name!} from your favourites list ?',
+                                    textCancel: 'No',
+                                    textConfirm: 'Remove',
+                                    onConfirm: () {
+                                      favStorage.remove(_hotelController
+                                          .shops[index].ownerId!);
+                                      Navigator.of(context).pop();
+                                    });
+                              }
+                            },
                             title: Text(
                               _hotelController.shops[index].name!,
                               style: TextStyle(
@@ -54,7 +95,7 @@ class ShopTile extends StatelessWidget {
                                         width: 50,
                                         fit: BoxFit.cover,
                                         placeholder:
-                                            AssetImage('assets/mainLogo.png'),
+                                            AssetImage('assets/logoIn.png'),
                                         image: NetworkImage(
                                           _hotelController.shops[index].img!,
                                         ))),

@@ -186,24 +186,30 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
                       ),
                     ),
                     Flexible(
-                      child: ElevatedButton(
-                        child: Text(
-                          'Verify Number',
-                          style: TextStyle(fontSize: 18),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 15),
-                            shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(18)))),
-                        onPressed: () {
-                          sendOtp();
-                          setState(() {
-                            loading = true;
-                          });
-                        },
-                      ),
+                      child: loading
+                          ? CircularProgressIndicator(
+                              color: Color(0xFFCFB840),
+                            )
+                          : ElevatedButton(
+                              child: Text(
+                                'Verify Number',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 50, vertical: 15),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(18)))),
+                              onPressed: loading
+                                  ? null
+                                  : () {
+                                      sendOtp();
+                                      setState(() {
+                                        loading = true;
+                                      });
+                                    },
+                            ),
                     ),
                   ],
                 ),

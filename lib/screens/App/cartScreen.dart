@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:picklick_customer/controllers/cart.dart';
 import 'package:picklick_customer/screens/App/home.dart';
@@ -14,6 +15,21 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   final CartController _cartController = Get.find();
+  bool? cartEmpty;
+
+  bool cartCount() {
+    _cartController.offerCart.length + _cartController.cart.length == 0
+        ? cartEmpty = true
+        : cartEmpty = false;
+    setState(() {});
+    return cartEmpty!;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    cartCount();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +38,7 @@ class _CartScreenState extends State<CartScreen> {
         elevation: 0,
         title: Text('My Cart'),
       ),
-      body: _cartController.offerCart.length + _cartController.cart.length == 0
+      body: cartEmpty!
           ? Center(
               child: SizedBox(
                 height: 200,
@@ -77,41 +93,22 @@ class _CartScreenState extends State<CartScreen> {
                                   elevation: 0.5,
                                   child: ListTile(
                                     title: Text(cart.name),
-                                    subtitle:
-                                        Text('₹ ${cart.price * cart.quantity}'),
+                                    subtitle: Text(
+                                        '₹ ${cart.price * cart.dishquantity}'),
                                     trailing: SizedBox(
-                                      width: 160,
+                                      width: 80,
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          IconButton(
-                                              onPressed: () {
-                                                if (cart.quantity > 1) {
-                                                  cart.setQuantity(-1);
-                                                  setState(() {
-                                                    _cartController.price
-                                                        .value -= cart.price;
-                                                  });
-                                                }
-                                              },
-                                              icon: Icon(Icons.remove)),
-                                          Text(cart.quantity.toString()),
-                                          IconButton(
-                                              onPressed: () {
-                                                cart.setQuantity(1);
-
-                                                setState(() {
-                                                  _cartController.price.value +=
-                                                      cart.price;
-                                                });
-                                              },
-                                              icon: Icon(Icons.add)),
+                                          Text('x${cart.quantity.toString()}'),
                                           IconButton(
                                               onPressed: () {
                                                 _cartController
                                                     .removeDishfromCart(
-                                                        cart, cart.quantity);
+                                                  cart,
+                                                );
+                                                cartCount();
                                               },
                                               icon: Icon(Icons.delete))
                                         ],
@@ -174,9 +171,9 @@ class _CartScreenState extends State<CartScreen> {
                                               icon: Icon(Icons.add)),
                                           IconButton(
                                               onPressed: () {
-                                                _cartController
-                                                    .removeOfferDishtoCart(
-                                                        offercart);
+                                                // _cartController
+                                                //   ..removeOfferDishtoCart(
+                                                //       offercart);
                                               },
                                               icon: Icon(Icons.delete))
                                         ],
@@ -194,6 +191,7 @@ class _CartScreenState extends State<CartScreen> {
         elevation: 0,
         color: Colors.white,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             SizedBox(
               width: 8,
@@ -220,14 +218,17 @@ class _CartScreenState extends State<CartScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                  onPressed: _cartController.cart.length != 0
+                  onPressed: !cartEmpty!
                       ? () {
-                          Get.to(
-                            () => PaymentMethodScreen(
-                              restaurantId: widget.id,
-                              restaurantName: widget.name,
-                            ),
-                          );
+                          Get.bottomSheet(BottomSheet(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(12),
+                                      topRight: Radius.circular(12))),
+                              onClosing: () {},
+                              builder: (context) {
+                                return getBill();
+                              }));
                         }
                       : null,
                   child: Text('Proceed'),
@@ -235,6 +236,137 @@ class _CartScreenState extends State<CartScreen> {
                     primary: Color(0xFFCFB840),
                     padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget getBill() {
+    return Scaffold(
+      body: Container(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 20,
+            ),
+            // Obx(() => Container(
+            //       decoration: BoxDecoration(
+            //           borderRadius: BorderRadius.all(Radius.circular(4)),
+            //           color: Colors.red),
+            //       height: 45,
+            //       child: Center(
+            //         child: Text(
+            //           '  TOTAL :  ₹ ${_cartController.price.value}',
+            //           style: TextStyle(
+            //               fontSize: 17,
+            //               fontWeight: FontWeight.w800,
+            //               color: Colors.white),
+            //         ),
+            //       ),
+            //     )),
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 4,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12),
+                          child: Row(
+                            children: [
+                              Text('Total Price  '),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12),
+                          child: Row(
+                            children: [
+                              Text('GST & Tax  '),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12),
+                          child: Row(
+                            children: [
+                              Text('Delivery Charge  '),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12),
+                          child: Row(
+                            children: [
+                              Text(
+                                'Grand Total  ',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                      flex: 1,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(':'),
+                          Text(':'),
+                          Text(':'),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Text(':')
+                        ],
+                      )),
+                  Expanded(
+                      flex: 4,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text('${_cartController.price.value}'),
+                          Text('${_cartController.price.value * 0.05}'),
+                          Text(':'),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Text(':')
+                        ],
+                      ))
+                ],
+              ),
+            ),
+
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: ElevatedButton(
+                onPressed: !cartEmpty!
+                    ? () {
+                        Get.to(
+                          () => PaymentMethodScreen(
+                            restaurantId: widget.id,
+                            restaurantName: widget.name,
+                          ),
+                        );
+                      }
+                    : null,
+                child: Text('Payment Method'),
+                style: ElevatedButton.styleFrom(
+                  primary: Color(0xFFCFB840),
+                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 ),
               ),
             )

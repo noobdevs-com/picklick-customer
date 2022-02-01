@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:lottie/lottie.dart';
 import 'package:get/get.dart';
 import 'package:picklick_customer/constants/constants.dart';
 import 'package:picklick_customer/controllers/cart.dart';
 import 'package:picklick_customer/controllers/hotel.dart';
+import 'package:picklick_customer/controllers/location.dart';
 
 import 'package:picklick_customer/screens/App/home.dart';
 import 'package:picklick_customer/services/fcm_notification.dart';
@@ -49,15 +51,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen>
   String? networkImage;
   late final AnimationController _controller;
   final fCMNotification = FCMNotification();
-
-  // Future<Position?> getlocation() async {
-  //   Position position = await Geolocator.getCurrentPosition(
-  //       desiredAccuracy: LocationAccuracy.high);
-
-  //   _currentPosition = position;
-
-  //   return position;
-  // }
+  final locationController = Get.put(LocationController());
 
   Future<void> getRestaurantToken() async {
     await FirebaseFirestore.instance
@@ -118,6 +112,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen>
       body: Column(
         children: [
           RadioListTile(
+            activeColor: Colors.green,
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -134,6 +129,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen>
             },
           ),
           RadioListTile(
+              activeColor: Colors.green,
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -155,6 +151,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen>
               // },
               ),
           RadioListTile(
+              activeColor: Colors.green,
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -194,6 +191,9 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen>
                 .toList());
 
             Get.defaultDialog(
+                cancelTextColor: Colors.black45,
+                confirmTextColor: Colors.white,
+                buttonColor: Color(0xFFCFB840),
                 title: 'Place Order',
                 middleText: 'Do you want to confirm the order ?',
                 textCancel: 'No',
@@ -218,11 +218,14 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen>
                           (_cartController.price.value / 100 * 10),
                       'notificationToken': userToken,
                       'restaurantId': widget.restaurantId,
-                      'restaurantImg': networkImage
+                      'restaurantImg': networkImage,
                       // 'coordinates': [
                       //   _currentPosition.longitude,
                       //   _currentPosition.latitude
                       // ]
+                      'location': GeoPoint(
+                          locationController.position!.latitude,
+                          locationController.position!.longitude),
                     }).whenComplete(() async {
                       await FirebaseFirestore.instance
                           .collection('adminOrders')

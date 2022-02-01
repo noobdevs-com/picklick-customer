@@ -28,10 +28,9 @@ class _DishScreenState extends State<DishScreen> {
         if (_cartController.cart.length > 0 ||
             _cartController.offerCart.length > 0) {
           Get.defaultDialog(
-              cancelTextColor: Color(0xFFCFB840),
+              cancelTextColor: Colors.black45,
+              confirmTextColor: Colors.white,
               buttonColor: Color(0xFFCFB840),
-              confirmTextColor: Color(0xFFF0EBCC),
-              backgroundColor: Color(0xFFF0EBCC),
               title: 'Warning',
               middleText:
                   'If you go back your cart will be cleared, Are you Sure You want to go back?',
@@ -54,44 +53,43 @@ class _DishScreenState extends State<DishScreen> {
           automaticallyImplyLeading: false,
           leading: Row(
             children: [
-              Expanded(
-                child: IconButton(
-                    onPressed: () {
-                      if (_cartController.cart.length > 0 ||
-                          _cartController.offerCart.length > 0) {
-                        Get.defaultDialog(
-                            title: 'Warning',
-                            middleText:
-                                'If you go back your cart will be cleared, Are you Sure You want to go back?',
-                            textCancel: 'No',
-                            textConfirm: 'Yes',
-                            onConfirm: () {
-                              _cartController.offerCart.clear();
-                              _cartController.cart.clear();
-                              _cartController.price.value = 0;
-                              Get.off(() => Home());
-                            });
-                      } else {
-                        Get.back();
-                      }
-                    },
-                    icon: Icon(CupertinoIcons.back)),
-              ),
-              Expanded(
-                child: Hero(
-                    tag: widget.img,
-                    child: CircleAvatar(
-                      radius: 20,
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                          child: Image.network(
-                            widget.img,
-                            height: 40,
-                            width: 40,
-                            fit: BoxFit.cover,
-                          )),
-                    )),
-              ),
+              IconButton(
+                  onPressed: () {
+                    if (_cartController.cart.length > 0 ||
+                        _cartController.offerCart.length > 0) {
+                      Get.defaultDialog(
+                          cancelTextColor: Colors.black45,
+                          confirmTextColor: Colors.white,
+                          buttonColor: Color(0xFFCFB840),
+                          title: 'Warning',
+                          middleText:
+                              'If you go back your cart will be cleared, Are you Sure You want to go back?',
+                          textCancel: 'No',
+                          textConfirm: 'Yes',
+                          onConfirm: () {
+                            _cartController.offerCart.clear();
+                            _cartController.cart.clear();
+                            _cartController.price.value = 0;
+                            Get.off(() => Home());
+                          });
+                    } else {
+                      Get.back();
+                    }
+                  },
+                  icon: Icon(CupertinoIcons.back)),
+              Hero(
+                  tag: widget.img,
+                  child: CircleAvatar(
+                    radius: 20,
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        child: Image.network(
+                          widget.img,
+                          height: 40,
+                          width: 40,
+                          fit: BoxFit.cover,
+                        )),
+                  )),
             ],
           ),
           leadingWidth: MediaQuery.of(context).size.width / 3,
@@ -137,6 +135,7 @@ class _DishScreenState extends State<DishScreen> {
         ),
         body: DishTile(
           id: widget.id,
+          name: widget.name,
         ),
       ),
     );

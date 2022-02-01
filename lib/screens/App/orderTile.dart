@@ -83,7 +83,7 @@ class _OrderTileState extends State<OrderTile> {
                                   child: ListTile(
                                     title: Text(order.dishes[index].name),
                                     subtitle: Text(
-                                        '₹ ${order.dishes[index].price * order.dishes[index].quantity}'),
+                                        '₹ ${order.dishes[index].price * order.dishes[index].dishquantity}'),
                                     trailing: Text(
                                       '${order.dishes[index].dishQuantity}',
                                       style: TextStyle(color: Colors.black),

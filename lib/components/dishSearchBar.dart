@@ -107,9 +107,9 @@ class _DishSearchBarState extends State<DishSearchBar> {
                                 Get.snackbar("Item already in cart",
                                     "The item you have choosen is already in cart.");
                               }
-                              _cartController.addDishtoCart(
-                                  _controller.dishes[i],
-                                  _controller.dishes[i].quantity);
+                              // _cartController.addDishtoCart(
+                              //   _controller.dishes[i],
+                              // );
                             },
                             child: Icon(
                               Icons.add_shopping_cart_rounded,

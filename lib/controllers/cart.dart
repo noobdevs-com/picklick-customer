@@ -5,17 +5,35 @@ import 'package:picklick_customer/models/offerDish.dart';
 
 class CartController extends GetxController {
   final cart = <Dish>[].obs;
-  final cartItemName = <String>[].obs;
+  // final cartItemName = <String>[].obs;
   final price = 0.0.obs;
 
-  void addDishtoCart(Dish dish, int quantity) {
-    cart.add(dish);
-    price.value = price.value + (dish.price * quantity);
+  void addDishtoCart(Dish dish) {
+    final list = cart.where((e) => e.name == dish.name).toList();
+    final index = cart.indexWhere((e) => e.name == dish.name);
+    if (list.isEmpty) {
+      cart.add(dish);
+      price.value = price.value + (dish.price * dish.dishQuantity);
+    } else {
+      price.value = price.value + (dish.price * dish.dishQuantity);
+      cart[index].dishQuantity++;
+    }
+    print(index);
   }
 
-  void removeDishfromCart(Dish dish, int quantity) {
-    cart.remove(dish);
-    price.value = price.value - (dish.price * quantity);
+  void removeDishfromCart(Dish dish) {
+    final list = cart.where((e) => e.name == dish.name).toList();
+    final index = cart.indexWhere((e) => e.name == dish.name);
+
+    if (cart[index].dishQuantity > 1) {
+      price.value = price.value - (dish.price * dish.dishQuantity);
+      cart[index].dishQuantity--;
+    } else if (cart[index].dishQuantity == 1) {
+      cart.remove(dish);
+      price.value = price.value - (dish.price * dish.dishQuantity);
+    }
+    ;
+    print(index);
   }
 
   int getCartItemCount() {

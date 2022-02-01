@@ -9,7 +9,7 @@ import 'package:picklick_customer/models/shop.dart';
 class HotelController extends GetxController {
   final shops = <Shop>[].obs;
   final dishes = <Dish>[].obs;
-  final offerDishes = <OfferDish>[].obs;
+
   final loading = false.obs;
 
   @override
@@ -33,31 +33,13 @@ class HotelController extends GetxController {
     loading.value = false;
   }
 
-  Future<void> getDishes(String id) async {
-    loading.value = true;
-    dishes.clear();
-    QuerySnapshot data = await FirebaseFirestore.instance
-        .collection("hotel_dishes")
-        .where('ownerId', isEqualTo: id)
-        .orderBy('name')
-        .get();
+  // Future<void> getOfferDishes() async {
+  //   loading.value = true;
+  //   offerDishes.clear();
+  //   QuerySnapshot data =
+  //       await FirebaseFirestore.instance.collection("hotel_offerDishes").get();
 
-    dishes.value = data.docs.map((e) => Dish.toJson(e)).toList();
-    loading.value = false;
-  }
-
-  Future<void> getOfferDishes(String id) async {
-    loading.value = true;
-    offerDishes.clear();
-    QuerySnapshot data = await FirebaseFirestore.instance
-        .collection("hotel_offerDishes")
-        .where('ownerId', isEqualTo: id)
-        .orderBy('name')
-        .get();
-
-    offerDishes.value = data.docs.map((e) => OfferDish.fromJson(e)).toList();
-    loading.value = false;
-  }
+  //   offerDishes.value = data.docs.map((e) => OfferDish.fromJson(e)).toList();
+  //   loading.value = false;
+  // }
 }
-
-mixin AnimatedState {}

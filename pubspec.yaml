@@ -37,10 +37,11 @@ dependencies:
   intl: ^0.17.0
 
   # Maps
-  dio: ^4.0.0
+
   geolocator: ^7.4.0
   flutter_polyline_points: ^1.0.0
   google_maps_flutter: ^2.0.6
+  geocoding: ^2.0.2
 
   # App
   url_launcher: ^6.0.12
