@@ -5,47 +5,48 @@ import 'package:picklick_customer/models/offerDish.dart';
 
 class CartController extends GetxController {
   final cart = <Dish>[].obs;
-  // final cartItemName = <String>[].obs;
   final price = 0.0.obs;
-
-  void addDishtoCart(Dish dish) {
-    final list = cart.where((e) => e.name == dish.name).toList();
-    final index = cart.indexWhere((e) => e.name == dish.name);
-    if (list.isEmpty) {
-      cart.add(dish);
-      price.value = price.value + (dish.price * dish.dishQuantity);
-    } else {
-      price.value = price.value + (dish.price * dish.dishQuantity);
-      cart[index].dishQuantity++;
-    }
-    print(index);
-  }
-
-  void removeDishfromCart(Dish dish) {
-    final list = cart.where((e) => e.name == dish.name).toList();
-    final index = cart.indexWhere((e) => e.name == dish.name);
-
-    if (cart[index].dishQuantity > 1) {
-      price.value = price.value - (dish.price * dish.dishQuantity);
-      cart[index].dishQuantity--;
-    } else if (cart[index].dishQuantity == 1) {
-      cart.remove(dish);
-      price.value = price.value - (dish.price * dish.dishQuantity);
-    }
-    ;
-    print(index);
-  }
-
   int getCartItemCount() {
-    return cart.length + offerCart.length;
+    return cart.length;
   }
 
   List<CartItem> getCartItems() {
     return cart.map((e) => CartItem.toJson(e)).toList();
   }
 
-  final offerCart = <OfferDish>[].obs;
+  void addDishtoCart(Dish dish) {
+    if (cart.contains(dish)) {
+      dish.quantity.value++;
+      price.value += dish.price;
+    } else {
+      cart.add(dish);
+      price.value += dish.price;
+    }
+  }
 
+  void removeDishfromCart(Dish dish) {
+    if (dish.quantity.value == 1) {
+      null;
+    } else {
+      dish.quantity.value--;
+      price.value -= dish.price;
+    }
+  }
+
+  void removeDish(Dish dish, int quantity) {
+    cart.remove(dish);
+    price.value -= dish.price * quantity;
+    dish.quantity.value = 1;
+  }
+
+  void arrangeDishToCartIndex(int index, Dish dish, List<Dish> dishList) {
+    int cartIndex = cart.indexWhere((e) => e.name == dish.name);
+    if (cart.contains(dish)) {
+      dishList[cartIndex] = dishList[index];
+    }
+  }
+
+  final offerCart = <OfferDish>[].obs;
   void addOfferDishtoCart(OfferDish offerdish) {
     offerCart.add(offerdish);
     price.value += offerdish.discountedPrice;
@@ -55,4 +56,6 @@ class CartController extends GetxController {
     offerCart.remove(offerdish);
     price.value -= offerdish.discountedPrice;
   }
+
+  final height = 0.0.obs;
 }

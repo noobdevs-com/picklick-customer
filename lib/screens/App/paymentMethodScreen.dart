@@ -1,15 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:lottie/lottie.dart';
 import 'package:get/get.dart';
 import 'package:picklick_customer/constants/constants.dart';
 import 'package:picklick_customer/controllers/cart.dart';
-import 'package:picklick_customer/controllers/hotel.dart';
 import 'package:picklick_customer/controllers/location.dart';
-
-import 'package:picklick_customer/screens/App/home.dart';
+import 'package:picklick_customer/controllers/paymet.dart';
 import 'package:picklick_customer/services/fcm_notification.dart';
 
 class PaymentMethodScreen extends StatefulWidget {
@@ -25,6 +21,7 @@ class PaymentMethodScreen extends StatefulWidget {
 
 class _PaymentMethodScreenState extends State<PaymentMethodScreen>
     with TickerProviderStateMixin {
+  GeoPoint? geoPosition;
   void initState() {
     super.initState();
     // getlocation();
@@ -45,6 +42,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen>
   String customerName = '';
   String customerAddress = '';
   String restaurantToken = '';
+
   String userToken = '';
   List<String> adminToken = [];
   String authToken = '';
@@ -52,6 +50,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen>
   late final AnimationController _controller;
   final fCMNotification = FCMNotification();
   final locationController = Get.put(LocationController());
+  final paymentController = Get.put(RazorPaymentGateway());
 
   Future<void> getRestaurantToken() async {
     await FirebaseFirestore.instance
@@ -63,8 +62,10 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen>
       setState(() {
         restaurantToken = data['notificationToken'];
         networkImage = data['img'];
+        geoPosition = data['geoLocation'];
       });
     });
+    locationController.getDistanceBtwUserAndRestaurant(geoPosition!);
   }
 
   Future<void> getAdminToken() async {
@@ -129,49 +130,47 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen>
             },
           ),
           RadioListTile(
-              activeColor: Colors.green,
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Google Pay'),
-                  Text(
-                    'Availble Soon',
-                    style: TextStyle(fontStyle: FontStyle.italic),
-                  )
-                ],
-              ),
-              value: PaymentMethod.GOOGLE_PAY,
-              groupValue: _method,
-              onChanged: null
-
-              // (PaymentMethod? value) {
-              //   setState(() {
-              //     _method = value;
-              //   });
-              // },
-              ),
+            activeColor: Colors.green,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Google Pay'),
+                Text(
+                  'Availble Soon',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                )
+              ],
+            ),
+            value: PaymentMethod.GOOGLE_PAY,
+            groupValue: _method,
+            onChanged: null,
+            // onChanged: (PaymentMethod? value) {
+            //   setState(() {
+            //     _method = value;
+            //   });
+            // },
+          ),
           RadioListTile(
-              activeColor: Colors.green,
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Pay TM'),
-                  Text(
-                    'Availble Soon',
-                    style: TextStyle(fontStyle: FontStyle.italic),
-                  )
-                ],
-              ),
-              value: PaymentMethod.PAY_TM,
-              groupValue: _method,
-              onChanged: null
-
-              // (PaymentMethod? value) {
-              //   setState(() {
-              //     _method = value;
-              //   });
-              // },
-              ),
+            activeColor: Colors.green,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Pay TM'),
+                Text(
+                  'Availble Soon',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                )
+              ],
+            ),
+            value: PaymentMethod.PAY_TM,
+            groupValue: _method,
+            onChanged: null,
+            // onChanged: (PaymentMethod? value) {
+            //   setState(() {
+            //     _method = value;
+            //   });
+            // },
+          ),
           ListTile(
             title: Text(
                 'Total Price :  ₹ ${_cartController.price.value} + Delivery Charge'),
@@ -182,103 +181,107 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen>
       bottomNavigationBar: BottomAppBar(
         child: ElevatedButton(
           onPressed: () async {
-            final user = FirebaseAuth.instance.currentUser!;
-            List dishes = _cartController.cart
-                .map((element) => element.converToJson())
-                .toList();
-            dishes.addAll(_cartController.offerCart
-                .map((element) => element.converToJson())
-                .toList());
+            if (_method == PaymentMethod.PAY_TM) {
+              paymentController.proceedPayment(250.toString(), customerName,
+                  FirebaseAuth.instance.currentUser!.phoneNumber.toString());
+            }
+            //             final user = FirebaseAuth.instance.currentUser!;
+            // List dishes = _cartController.cart
+            //     .map((element) => element.converToJson())
+            //     .toList();
+            // dishes.addAll(_cartController.offerCart
+            //     .map((element) => element.converToJson())
+            //     .toList());
 
-            Get.defaultDialog(
-                cancelTextColor: Colors.black45,
-                confirmTextColor: Colors.white,
-                buttonColor: Color(0xFFCFB840),
-                title: 'Place Order',
-                middleText: 'Do you want to confirm the order ?',
-                textCancel: 'No',
-                textConfirm: 'Yes',
-                onConfirm: () async {
-                  Navigator.of(context).pop();
-                  try {
-                    await FirebaseFirestore.instance.collection('orders').add({
-                      'dishes': dishes,
-                      'orderStatus': OrderStatus.pending.toString(),
-                      'orderedAt': Timestamp.fromDate(DateTime.now()),
-                      'paymentMethod': _method.toString(),
-                      'price': _cartController.price.value,
-                      'quantity': _cartController.cart.length +
-                          _cartController.offerCart.length,
-                      'uid': user.uid,
-                      'restaurantName': widget.restaurantName,
-                      'customerName': customerName,
-                      'customerAddress': customerAddress,
-                      'customerPhoneNumber': user.phoneNumber,
-                      'PLpriceTotal': _cartController.price.value -
-                          (_cartController.price.value / 100 * 10),
-                      'notificationToken': userToken,
-                      'restaurantId': widget.restaurantId,
-                      'restaurantImg': networkImage,
-                      // 'coordinates': [
-                      //   _currentPosition.longitude,
-                      //   _currentPosition.latitude
-                      // ]
-                      'location': GeoPoint(
-                          locationController.position!.latitude,
-                          locationController.position!.longitude),
-                    }).whenComplete(() async {
-                      await FirebaseFirestore.instance
-                          .collection('adminOrders')
-                          .add({
-                        'dishes': dishes,
-                        'orderStatus': OrderStatus.pending.toString(),
-                        'orderedAt': Timestamp.fromDate(DateTime.now()),
-                        'paymentMethod': _method.toString(),
-                        'price': _cartController.price.value,
-                        'quantity': _cartController.cart.length +
-                            _cartController.offerCart.length,
-                        'uid': user.uid,
-                        'restaurantName': widget.restaurantName,
-                        'customerName': customerName,
-                        'customerAddress': customerAddress,
-                        'customerPhoneNumber': user.phoneNumber,
-                        'PLpriceTotal': _cartController.price.value -
-                            (_cartController.price.value / 100 * 10),
-                        'notificationToken': userToken,
-                        'restaurantId': widget.restaurantId,
-                        'restaurantImg': networkImage
-                        // 'coordinates': [
-                        //   _currentPosition.longitude,
-                        //   _currentPosition.latitude
-                        // ]
-                      });
-                      adminToken.forEach((e) =>
-                          fCMNotification.createOrderNotification(
-                              e,
-                              'Incoming Order',
-                              'You have a pending order from a customer !'));
-                      setState(() {
-                        _cartController.cart.clear();
-                        _cartController.offerCart.clear();
-                        _cartController.price.value = 0;
-                        Get.bottomSheet(
-                          Lottie.asset('assets/confirmAnimation.json',
-                              fit: BoxFit.fill,
-                              controller: _controller, onLoaded: (comp) {
-                            _controller.duration = comp.duration;
-                            _controller
-                                .forward()
-                                .whenComplete(() => Navigator.of(context).pop())
-                                .then((value) => Get.offAll(() => Home()));
-                          }),
-                          backgroundColor: Color(0xFFF0EBCC),
-                        );
-                      });
-                    });
-                  } catch (e) {
-                    print(e);
-                  }
-                });
+            // Get.defaultDialog(
+            //     cancelTextColor: Colors.black45,
+            //     confirmTextColor: Colors.white,
+            //     buttonColor: Color(0xFFCFB840),
+            //     title: 'Place Order',
+            //     middleText: 'Do you want to confirm the order ?',
+            //     textCancel: 'No',
+            //     textConfirm: 'Yes',
+            //     onConfirm: () async {
+            //       Navigator.of(context).pop();
+            //       try {
+            //         await FirebaseFirestore.instance.collection('orders').add({
+            //           'dishes': dishes,
+            //           'orderStatus': OrderStatus.pending.toString(),
+            //           'orderedAt': Timestamp.fromDate(DateTime.now()),
+            //           'paymentMethod': _method.toString(),
+            //           'price': _cartController.price.value,
+            //           'quantity': _cartController.cart.length +
+            //               _cartController.offerCart.length,
+            //           'uid': user.uid,
+            //           'restaurantName': widget.restaurantName,
+            //           'customerName': customerName,
+            //           'customerAddress': customerAddress,
+            //           'customerPhoneNumber': user.phoneNumber,
+            //           'PLpriceTotal': _cartController.price.value -
+            //               (_cartController.price.value / 100 * 10),
+            //           'notificationToken': userToken,
+            //           'restaurantId': widget.restaurantId,
+            //           'restaurantImg': networkImage,
+            //           // 'coordinates': [
+            //           //   _currentPosition.longitude,
+            //           //   _currentPosition.latitude
+            //           // ]
+            //           'location': GeoPoint(
+            //               locationController.position!.latitude,
+            //               locationController.position!.longitude),
+            //         }).whenComplete(() async {
+            //           await FirebaseFirestore.instance
+            //               .collection('adminOrders')
+            //               .add({
+            //             'dishes': dishes,
+            //             'orderStatus': OrderStatus.pending.toString(),
+            //             'orderedAt': Timestamp.fromDate(DateTime.now()),
+            //             'paymentMethod': _method.toString(),
+            //             'price': _cartController.price.value,
+            //             'quantity': _cartController.cart.length +
+            //                 _cartController.offerCart.length,
+            //             'uid': user.uid,
+            //             'restaurantName': widget.restaurantName,
+            //             'customerName': customerName,
+            //             'customerAddress': customerAddress,
+            //             'customerPhoneNumber': user.phoneNumber,
+            //             'PLpriceTotal': _cartController.price.value -
+            //                 (_cartController.price.value / 100 * 10),
+            //             'notificationToken': userToken,
+            //             'restaurantId': widget.restaurantId,
+            //             'restaurantImg': networkImage
+            //             // 'coordinates': [
+            //             //   _currentPosition.longitude,
+            //             //   _currentPosition.latitude
+            //             // ]
+            //           });
+            //           adminToken.forEach((e) =>
+            //               fCMNotification.createOrderNotification(
+            //                   e,
+            //                   'Incoming Order',
+            //                   'You have a pending order from a customer !'));
+            //           setState(() {
+            //             _cartController.cart.clear();
+            //             _cartController.offerCart.clear();
+            //             _cartController.price.value = 0;
+            //             Get.bottomSheet(
+            //               Lottie.asset('assets/confirmAnimation.json',
+            //                   fit: BoxFit.fill,
+            //                   controller: _controller, onLoaded: (comp) {
+            //                 _controller.duration = comp.duration;
+            //                 _controller
+            //                     .forward()
+            //                     .whenComplete(() => Navigator.of(context).pop())
+            //                     .then((value) => Get.offAll(() => Home()));
+            //               }),
+            //               backgroundColor: Color(0xFFF0EBCC),
+            //             );
+            //           });
+            //         });
+            //       } catch (e) {
+            //         print(e);
+            //       }
+            //     });
           },
           child: Text('Checkout'),
           style: ElevatedButton.styleFrom(

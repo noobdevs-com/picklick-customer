@@ -20,7 +20,6 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final SearchController searchController = Get.put(SearchController());
 
-  List<String> tempSearch = [];
   Future<void> getDishes(String value) async {
     searchController.shops.clear();
     FirebaseFirestore.instance
@@ -32,7 +31,6 @@ class _SearchScreenState extends State<SearchScreen> {
         .then((snapshot) {
       snapshot.docs.forEach((element) {
         searchController.shops.add(Shop.toJson(element.data()));
-        tempSearch.add(Shop.toJson(element.data()).name!.toUpperCase());
       });
     });
   }

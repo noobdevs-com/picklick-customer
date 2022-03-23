@@ -1,13 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:picklick_customer/services/geolocatrionservice.dart';
 
 class LocationController extends GetxController {
-  final geolocationService = GeolocationService();
   Position? position;
   String? address;
+  double? distance;
 
-  setCurrentlocation() async {
-    position = await geolocationService.getLocation();
+  Future setCurrentlocation() async {
+    position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.bestForNavigation,
+    );
+  }
+
+  getDistanceBtwUserAndRestaurant(GeoPoint restaurantPosition) async {
+    distance = Geolocator.distanceBetween(
+        position!.latitude,
+        position!.longitude,
+        restaurantPosition.latitude,
+        restaurantPosition.longitude);
+    print(distance);
   }
 }

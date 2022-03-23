@@ -13,7 +13,7 @@ const KTFBorderStyle = OutlineInputBorder(
 
 const KTFFocusedBorderStyle = OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(8)),
-    borderSide: BorderSide(color: Colors.green));
+    borderSide: BorderSide(color: Colors.black));
 
 const kCardShape = RoundedRectangleBorder(
     borderRadius: BorderRadius.only(

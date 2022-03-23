@@ -31,7 +31,7 @@ class _DishTileState extends State<DishTile> {
     }
   }
 
-  List dishes = <Dish>[];
+  List<Dish> dishes = [];
 
   bool loading = false;
 
@@ -96,106 +96,52 @@ class _DishTileState extends State<DishTile> {
                               )),
                         ),
                       ),
-                      trailing: _cartController.cart.contains(dishes[index])
-                          ? Column(
-                              children: [
-                                Expanded(
-                                    child: Text(
-                                  'Added',
-                                  style: TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.grey,
-                                  ),
-                                )),
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: Color(0xFFF0EBCC),
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(4)),
-                                      border: Border.all(
-                                          width: 2, color: Color(0xFFF0EBCC))),
-                                  height: 28,
-                                  width: 80,
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 2,
-                                        child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                                primary: Colors.red,
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 2,
-                                                    horizontal: 4)),
-                                            onPressed: () {
-                                              _cartController.price.value -=
-                                                  _cartController
-                                                      .cart[index].price;
-
-                                              _cartController
-                                                  .removeDishfromCart(
+                      trailing: Obx(
+                        () => _cartController.cart.contains(dishes[index])
+                            ? Column(
+                                children: [
+                                  Expanded(
+                                      child: Text(
+                                    'Added',
+                                    style: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.grey,
+                                    ),
+                                  )),
+                                  Expanded(
+                                    child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            primary: Colors.red),
+                                        onPressed: () {
+                                          Future.delayed(
+                                              Duration(milliseconds: 100), () {
+                                            _cartController.removeDish(
                                                 dishes[index],
-                                              );
-                                              cartBottomContainer();
-                                              setState(() {});
-                                            },
-                                            child: Center(
-                                                child: Icon(
-                                              Icons.remove,
-                                              size: 15,
-                                            ))),
-                                      ),
-                                      Expanded(
-                                          flex: 3,
-                                          child: Center(
-                                            child: Text(dishes[index]
-                                                .dishQuantity
-                                                .toString()),
-                                          )),
-                                      Expanded(
-                                        flex: 2,
-                                        child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                                primary: Color(0xFFCFB840),
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 2,
-                                                    horizontal: 4)),
-                                            onPressed: () {
-                                              _cartController.addDishtoCart(
-                                                dishes[index],
-                                              );
-                                              print(dishes[index].dishQuantity);
-                                              _cartController.price.value +=
-                                                  _cartController
-                                                      .cart[index].price;
-                                              print(_cartController.cart);
-                                              setState(() {});
-                                            },
-                                            child: Center(
-                                                child: Icon(
-                                              Icons.add,
-                                              size: 15,
-                                            ))),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            )
-                          : ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  primary: Color(0xFFCFB840)),
-                              onPressed: () {
-                                _cartController.addDishtoCart(
-                                  dishes[index],
-                                );
-
-                                cartBottomContainer();
-                                setState(() {});
-                              },
-                              child: Icon(
-                                Icons.add_shopping_cart_rounded,
+                                                dishes[index].quantity.value);
+                                            cartBottomContainer();
+                                          });
+                                        },
+                                        child:
+                                            Icon(Icons.remove_shopping_cart)),
+                                  )
+                                ],
+                              )
+                            : ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    primary: Color(0xFFCFB840)),
+                                onPressed: () {
+                                  Future.delayed(Duration(milliseconds: 100),
+                                      () {
+                                    _cartController
+                                        .addDishtoCart(dishes[index]);
+                                    cartBottomContainer();
+                                  });
+                                },
+                                child: Icon(
+                                  Icons.add_shopping_cart_rounded,
+                                ),
                               ),
-                            ),
+                      ),
                     ),
                   );
                 }),
@@ -206,29 +152,35 @@ class _DishTileState extends State<DishTile> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: menuScreen(),
-        bottomNavigationBar: AnimatedContainer(
-          height: _height,
-          duration: Duration(milliseconds: 500),
-          child: Card(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20))),
-            color: Color(0xFFCFB840),
-            child: ListTile(
-              title: Obx(() => Text(
-                    '${_cartController.getCartItemCount()} Items : ₹ ${_cartController.price}',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400),
-                  )),
-              trailing: ElevatedButton.icon(
-                  onPressed: () {
-                    Get.to(CartScreen(name: widget.name, id: widget.id));
-                  },
-                  icon: Icon(Icons.shopping_cart),
-                  label: Text('CART')),
+        bottomNavigationBar: GestureDetector(
+          onTap: () {
+            Get.to(() => CartScreen(name: widget.name, id: widget.id));
+          },
+          child: AnimatedContainer(
+            height: _height,
+            duration: Duration(milliseconds: 500),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20))),
+              color: Color(0xFFCFB840),
+              child: ListTile(
+                title: Obx(() => Text(
+                      '${_cartController.getCartItemCount()} Items : ₹ ${_cartController.price}',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400),
+                    )),
+                trailing: ElevatedButton.icon(
+                    onPressed: () {
+                      Get.to(
+                          () => CartScreen(name: widget.name, id: widget.id));
+                    },
+                    icon: Icon(Icons.shopping_cart),
+                    label: Text('CART')),
+              ),
             ),
           ),
         ));

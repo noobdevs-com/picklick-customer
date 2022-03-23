@@ -1,9 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 import 'package:picklick_customer/models/dish.dart';
-import 'package:picklick_customer/models/offerDish.dart';
 import 'package:picklick_customer/models/shop.dart';
 
 class HotelController extends GetxController {

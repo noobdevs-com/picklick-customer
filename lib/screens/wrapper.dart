@@ -2,8 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:picklick_customer/controllers/location.dart';
+import 'package:picklick_customer/screens/Auth/permissionpag.dart';
 import 'package:picklick_customer/screens/App/home.dart';
 import 'package:picklick_customer/screens/Auth/authenticationWrapper.dart';
 import 'package:picklick_customer/services/fcm_notification.dart';
@@ -16,7 +21,7 @@ class Wrapper extends StatefulWidget {
 
 class _WrapperState extends State<Wrapper> {
   GetStorage getStorage = GetStorage();
-
+  final locationController = Get.put(LocationController());
   FCMNotification fcmNotification = FCMNotification();
 
   // getLocationStatus() async {
@@ -40,17 +45,15 @@ class _WrapperState extends State<Wrapper> {
       // signed in
       updateNotificationToken(FirebaseAuth.instance.currentUser!.uid);
 
-      Get.off(() => Home());
+      if (await Permission.location.isGranted) {
+        await locationController.setCurrentlocation();
+        Get.off(() => Home());
+      } else {
+        Get.off(() => PermissionPage());
+      }
     } else {
       Get.off(() => AuthenticationWrapper());
     }
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    // print(getLocationStatus());
   }
 
   @override
@@ -70,7 +73,9 @@ class _WrapperState extends State<Wrapper> {
                   SizedBox(
                     height: 15,
                   ),
-                  CupertinoActivityIndicator()
+                  CircularProgressIndicator(
+                    color: Color(0xFFCFB840),
+                  )
                 ],
               ),
             ),

@@ -141,8 +141,15 @@ class MenuDrawer extends StatelessWidget {
             ),
           ),
           SizedBox(
+            height: 20,
+          ),
+          Text(
+            'version : 1.0.0+1.15',
+            style: TextStyle(color: Colors.grey),
+          ),
+          SizedBox(
             height: 10,
-          )
+          ),
         ],
       ),
     );

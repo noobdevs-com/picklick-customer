@@ -5,6 +5,7 @@ class Shop {
 
   String? name;
   String? location;
+  GeoPoint? geoLocation;
   String? img;
   String? ownerId;
   String? status;

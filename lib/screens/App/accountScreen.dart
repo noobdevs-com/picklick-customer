@@ -8,8 +8,6 @@ import 'package:picklick_customer/constants/valueConstants.dart';
 import 'package:picklick_customer/controllers/location.dart';
 import 'package:picklick_customer/models/user.dart';
 import 'package:picklick_customer/screens/App/loading.dart';
-import 'package:picklick_customer/services/geolocatrionservice.dart';
-
 import 'package:geocoding/geocoding.dart';
 
 class MyAccount extends StatefulWidget {
@@ -30,7 +28,6 @@ class _MyAccountState extends State<MyAccount> {
   final _formKey = GlobalKey<FormState>();
 
   bool loading = false;
-  final geoLocationService = GeolocationService();
 
   final locationController = Get.put(LocationController());
 
@@ -218,8 +215,10 @@ class _MyAccountState extends State<MyAccount> {
                               textConfirm: 'Yes',
                               onConfirm: () {
                                 Navigator.pop(context);
-                                setState(() {
-                                  currentPage = ProfileVeiw.PROFILE_EDIT;
+                                Future.delayed(Duration(milliseconds: 500), () {
+                                  setState(() {
+                                    currentPage = ProfileVeiw.PROFILE_EDIT;
+                                  });
                                 });
                               });
                         },
@@ -391,8 +390,7 @@ class _MyAccountState extends State<MyAccount> {
                                           loading = true;
                                         });
 
-                                        await geoLocationService
-                                            .getLocation()
+                                        await Geolocator.getCurrentPosition()
                                             .then((value) async {
                                           final placemark =
                                               await placemarkFromCoordinates(

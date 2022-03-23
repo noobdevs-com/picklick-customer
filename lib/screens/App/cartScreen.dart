@@ -1,7 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:picklick_customer/controllers/cart.dart';
+import 'package:picklick_customer/controllers/location.dart';
 import 'package:picklick_customer/screens/App/home.dart';
 import 'package:picklick_customer/screens/App/paymentMethodScreen.dart';
 
@@ -17,6 +18,22 @@ class _CartScreenState extends State<CartScreen> {
   final CartController _cartController = Get.find();
   bool? cartEmpty;
 
+  GeoPoint? restaurantLocation;
+  final locationController = Get.put(LocationController());
+
+  getRestaurantLocation() {
+    FirebaseFirestore.instance
+        .collection('hotels')
+        .doc(widget.id)
+        .get()
+        .then((value) {
+      final data = value.data()!;
+      restaurantLocation = data['geoLocation'];
+    }).whenComplete(() {
+      locationController.getDistanceBtwUserAndRestaurant(restaurantLocation!);
+    });
+  }
+
   bool cartCount() {
     _cartController.offerCart.length + _cartController.cart.length == 0
         ? cartEmpty = true
@@ -29,6 +46,8 @@ class _CartScreenState extends State<CartScreen> {
   void initState() {
     super.initState();
     cartCount();
+    getRestaurantLocation();
+    getDeliveryData();
   }
 
   @override
@@ -91,28 +110,166 @@ class _CartScreenState extends State<CartScreen> {
                                     const EdgeInsets.symmetric(horizontal: 4),
                                 child: Card(
                                   elevation: 0.5,
-                                  child: ListTile(
-                                    title: Text(cart.name),
-                                    subtitle: Text(
-                                        '₹ ${cart.price * cart.dishquantity}'),
-                                    trailing: SizedBox(
-                                      width: 80,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text('x${cart.quantity.toString()}'),
-                                          IconButton(
-                                              onPressed: () {
-                                                _cartController
-                                                    .removeDishfromCart(
-                                                  cart,
-                                                );
-                                                cartCount();
-                                              },
-                                              icon: Icon(Icons.delete))
-                                        ],
-                                      ),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            opacity: 0.08,
+                                            image: NetworkImage(cart.img),
+                                            fit: BoxFit.fill),
+                                        color: Colors.white,
+                                        border: Border.all(
+                                            width: 1, color: Color(0xFFCFB840)),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8))),
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 80,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 15),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                height: 8,
+                                              ),
+                                              Text(
+                                                cart.name,
+                                                style: TextStyle(fontSize: 18),
+                                              ),
+                                              SizedBox(
+                                                height: 8,
+                                              ),
+                                              Text(
+                                                '₹ ${cart.price * cart.dishquantity}',
+                                                style: TextStyle(
+                                                    color: Colors.grey),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  color: Colors.red,
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(12))),
+                                              height: 30,
+                                              width: 40,
+                                              child: Center(
+                                                child: IconButton(
+                                                    onPressed: () {
+                                                      _cartController
+                                                          .removeDish(
+                                                              _cartController
+                                                                  .cart[index],
+                                                              _cartController
+                                                                  .cart[index]
+                                                                  .quantity
+                                                                  .value);
+                                                    },
+                                                    icon: Icon(
+                                                      Icons
+                                                          .remove_shopping_cart,
+                                                      size: 15,
+                                                      color: Colors.white,
+                                                    )),
+                                              ),
+                                            ),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  color: Color(0xFFF0EBCC),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(4)),
+                                                  border: Border.all(
+                                                      width: 2,
+                                                      color:
+                                                          Color(0xFFF0EBCC))),
+                                              height: 28,
+                                              width: 100,
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: ElevatedButton(
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                                primary:
+                                                                    Colors.red,
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        vertical:
+                                                                            2,
+                                                                        horizontal:
+                                                                            4)),
+                                                        onPressed: () {
+                                                          _cartController
+                                                              .removeDishfromCart(
+                                                                  _cartController
+                                                                          .cart[
+                                                                      index]);
+                                                          setState(() {});
+                                                        },
+                                                        child: Center(
+                                                            child: Icon(
+                                                          Icons.remove,
+                                                          size: 15,
+                                                        ))),
+                                                  ),
+                                                  Expanded(
+                                                      flex: 3,
+                                                      child: Center(
+                                                        child: Text(
+                                                            _cartController
+                                                                .cart[index]
+                                                                .quantity
+                                                                .value
+                                                                .toString()),
+                                                      )),
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: ElevatedButton(
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                                primary: Color(
+                                                                    0xFFCFB840),
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        vertical:
+                                                                            2,
+                                                                        horizontal:
+                                                                            4)),
+                                                        onPressed: () {
+                                                          _cartController
+                                                              .addDishtoCart(
+                                                                  _cartController
+                                                                          .cart[
+                                                                      index]);
+                                                          setState(() {});
+                                                        },
+                                                        child: Center(
+                                                            child: Icon(
+                                                          Icons.add,
+                                                          size: 15,
+                                                        ))),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -156,6 +313,7 @@ class _CartScreenState extends State<CartScreen> {
                                                             .discountedPrice;
                                                   });
                                                 }
+                                                
                                               },
                                               icon: Icon(Icons.remove)),
                                           Text(offercart.quantity.toString()),
@@ -245,133 +403,145 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
+  double? tax;
+  double? delivery;
+
+  getDeliveryData() {
+    FirebaseFirestore.instance
+        .collection('deliveryPrice')
+        .doc('KSt77AQBXlihRKSrJj7n')
+        .get()
+        .then((value) {
+      final data = value.data()!;
+      tax = data['taxPercent'];
+      delivery = data['deliveryPercent'];
+    });
+    print(delivery);
+    print(tax);
+  }
+
+  double taxPrice() {
+    return (_cartController.price.value * tax!).ceilToDouble();
+  }
+
+  double deliveryCharge() {
+    final disKM = locationController.distance! / 1000;
+    final price = disKM * delivery!;
+    return price.ceilToDouble();
+  }
+
   Widget getBill() {
-    return Scaffold(
-      body: Container(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20,
-            ),
-            // Obx(() => Container(
-            //       decoration: BoxDecoration(
-            //           borderRadius: BorderRadius.all(Radius.circular(4)),
-            //           color: Colors.red),
-            //       height: 45,
-            //       child: Center(
-            //         child: Text(
-            //           '  TOTAL :  ₹ ${_cartController.price.value}',
-            //           style: TextStyle(
-            //               fontSize: 17,
-            //               fontWeight: FontWeight.w800,
-            //               color: Colors.white),
-            //         ),
-            //       ),
-            //     )),
-            Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 4,
+    return Container(
+      height: MediaQuery.of(context).size.height / 3,
+      child: Column(
+        children: [
+          SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 4,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12),
+                        child: Row(
+                          children: [
+                            Text('Total Price  '),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12),
+                        child: Row(
+                          children: [
+                            Text('GST & Tax  '),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12),
+                        child: Row(
+                          children: [
+                            Text('Delivery Charge  '),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12),
+                        child: Row(
+                          children: [
+                            Text(
+                              'Grand Total  ',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                    flex: 1,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12),
-                          child: Row(
-                            children: [
-                              Text('Total Price  '),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12),
-                          child: Row(
-                            children: [
-                              Text('GST & Tax  '),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12),
-                          child: Row(
-                            children: [
-                              Text('Delivery Charge  '),
-                            ],
-                          ),
-                        ),
+                        Text(':'),
+                        Text(':'),
+                        Text(':'),
                         SizedBox(
                           height: 8,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Grand Total  ',
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                        ),
+                        Text(':')
                       ],
-                    ),
-                  ),
-                  Expanded(
-                      flex: 1,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text(':'),
-                          Text(':'),
-                          Text(':'),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Text(':')
-                        ],
-                      )),
-                  Expanded(
-                      flex: 4,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text('${_cartController.price.value}'),
-                          Text('${_cartController.price.value * 0.05}'),
-                          Text(':'),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Text(':')
-                        ],
-                      ))
-                ],
+                    )),
+                Expanded(
+                    flex: 4,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('₹ ${_cartController.price.value}'),
+                        Text('₹ ${taxPrice()}'),
+                        Text('₹ ${deliveryCharge()}'),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Text(
+                            '₹ ${_cartController.price.value + taxPrice() + deliveryCharge()}')
+                      ],
+                    ))
+              ],
+            ),
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: ElevatedButton(
+              onPressed: !cartEmpty!
+                  ? () {
+                      Get.to(
+                        () => PaymentMethodScreen(
+                          restaurantId: widget.id,
+                          restaurantName: widget.name,
+                        ),
+                      );
+                    }
+                  : null,
+              child: Text('Payment Method'),
+              style: ElevatedButton.styleFrom(
+                primary: Color(0xFFCFB840),
+                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
               ),
             ),
-
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: ElevatedButton(
-                onPressed: !cartEmpty!
-                    ? () {
-                        Get.to(
-                          () => PaymentMethodScreen(
-                            restaurantId: widget.id,
-                            restaurantName: widget.name,
-                          ),
-                        );
-                      }
-                    : null,
-                child: Text('Payment Method'),
-                style: ElevatedButton.styleFrom(
-                  primary: Color(0xFFCFB840),
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                ),
-              ),
-            )
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
