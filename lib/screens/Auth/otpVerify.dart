@@ -80,7 +80,7 @@ class _OTPScreenState extends State<OTPScreen> {
       codeSent: (String vId, int? rtoken) async {
         resendToken = rtoken;
         print('Code has been sent');
-        Get.snackbar('OTP Sent', 'OTP has been sent to you mobile number');
+        Get.rawSnackbar(message: 'OTP has been sent to you mobile number');
       },
       codeAutoRetrievalTimeout: (String verificationId) {},
       forceResendingToken: resendToken,
@@ -155,116 +155,116 @@ class _OTPScreenState extends State<OTPScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              loading == true
-                  ? Container(
-                      height: 5,
-                      child: LinearProgressIndicator(
-                        backgroundColor: Colors.white,
-                        color: Color(0xFFCFB840),
-                      ),
-                    )
-                  : Container(
-                      height: 5,
-                    ),
-              SizedBox(
-                height: 500,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text('OTP Has Been Sent To',
-                            style: TextStyle(fontSize: 25)),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Text('+91  ${widget.number}',
-                            style: TextStyle(fontSize: 20))
-                      ],
-                    ),
-                    Text('Please Enter The 6 - Digit Code Sent To Your Number',
-                        style: TextStyle(fontSize: 16),
-                        textAlign: TextAlign.center),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 50),
-                      child: PinInputTextField(
-                        cursor: Cursor(color: Colors.black),
-                        decoration: BoxLooseDecoration(
-                            bgColorBuilder: FixedColorBuilder(Colors.white24),
-                            strokeColorBuilder:
-                                FixedColorBuilder(Color(0xFFCFB840))),
-                        pinLength: 6,
-                        controller: otpController,
-                        textInputAction: TextInputAction.go,
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                    ElevatedButton(
-                      child: Text(
-                        'Verify Otp',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 15),
-                          shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(18)))),
-                      onPressed: () async {
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Color(0xFFF0EBCC),
+        elevation: 2,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Get.back();
+          },
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 40,
+            ),
+            Text('Verify OTP',
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    wordSpacing: 2.5,
+                    letterSpacing: 0.5)),
+            SizedBox(
+              height: 20,
+            ),
+            Text('Please Enter The 6 - Digit Code',
+                style: TextStyle(color: Colors.grey),
+                textAlign: TextAlign.center),
+            SizedBox(
+              height: 28,
+            ),
+            PinInputTextField(
+              // decoration: BoxLooseDecoration(
+              //     bgColorBuilder: FixedColorBuilder(Colors.white24),
+              //     strokeColorBuilder: FixedColorBuilder(Color(0xFFCFB840))),
+              decoration: BoxLooseDecoration(
+                  strokeColorBuilder:
+                      PinListenColorBuilder(Color(0xFFCFB840), Colors.grey)),
+              pinLength: 6,
+              controller: otpController,
+              textInputAction: TextInputAction.go,
+              keyboardType: TextInputType.number,
+            ),
+            SizedBox(
+              height: 12,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  '00:$startTime',
+                  style: TextStyle(color: Colors.grey, letterSpacing: 2),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 28,
+            ),
+            SizedBox(
+              height: 48,
+              width: 292,
+              child: ElevatedButton(
+                onPressed: loading
+                    ? null
+                    : () async {
                         verifyOtp();
                         setState(() {
                           loading = true;
                         });
                       },
-                    ),
-                    RichText(
-                        text: TextSpan(children: [
-                      TextSpan(
-                          text: ' Resend OTP ',
-                          style: TextStyle(color: Colors.black, fontSize: 16)),
-                      TextSpan(
-                          text: ' 00:$startTime ',
-                          style: TextStyle(color: Colors.red, fontSize: 16)),
-                      TextSpan(
-                          text: ' seconds ',
-                          style: TextStyle(color: Colors.black, fontSize: 16)),
-                    ])),
-                    startTime == 0
-                        ? TextButton.icon(
-                            onPressed: () {
-                              reSendOtp();
-                              if (mounted)
-                                setState(() {
-                                  startTime = 30;
-                                });
-                              startTimer();
-                            },
-                            icon: Icon(
-                              Icons.restore,
-                              color: Colors.red,
-                            ),
-                            label: Text(
-                              'Resend OTP',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          )
-                        : Container(
-                            height: 5,
-                          )
-                  ],
+                child: Text(
+                  'Verify Otp',
                 ),
+                style: ElevatedButton.styleFrom(
+                    primary: Colors.redAccent[400],
+                    onPrimary: Colors.white,
+                    minimumSize: Size(double.infinity, 60),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15))),
               ),
-            ],
-          ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Didn’t Recieve the OTP ? ',
+                  style: TextStyle(color: Colors.grey),
+                ),
+                TextButton(
+                    onPressed: startTime == 0
+                        ? () {
+                            reSendOtp();
+
+                            startTime = 45;
+                            startTimer();
+                          }
+                        : null,
+                    child: Text(
+                      'RESEND OTP',
+                    ),
+                    style: TextButton.styleFrom(primary: Colors.red)),
+              ],
+            ),
+          ],
         ),
       ),
     );

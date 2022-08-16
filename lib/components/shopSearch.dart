@@ -8,12 +8,6 @@ class CustomShopSearch extends SearchDelegate {
   List<Shop> matchSuggestionQuery = [];
 
   Future<void> getDishes(String value) async {
-    if (query.isEmpty) {
-      searchQuery.clear();
-      matchResultQuery.clear();
-      matchSuggestionQuery.clear();
-    }
-    print(searchQuery);
     FirebaseFirestore.instance
         .collection('hotels')
         .where('name', isGreaterThanOrEqualTo: value)
@@ -22,7 +16,9 @@ class CustomShopSearch extends SearchDelegate {
         .get()
         .then((snapshot) {
       snapshot.docs.forEach((element) {
-        searchQuery.add(Shop.toJson(element.data()));
+        if (!searchQuery.contains(element)) {
+          searchQuery.add(Shop.toJson(element.data()));
+        }
       });
     });
   }
@@ -55,10 +51,11 @@ class CustomShopSearch extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    Future.delayed(Duration(milliseconds: 500), () => getDishes(query));
+    getDishes(query);
 
     for (var dish in searchQuery) {
-      if (dish.name!.toLowerCase().contains(query.toLowerCase())) {
+      if (dish.name!.toLowerCase().contains(query.toLowerCase()) &&
+          !matchResultQuery.contains(dish)) {
         matchResultQuery.add(dish);
       }
     }
@@ -121,12 +118,12 @@ class CustomShopSearch extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    Future.delayed(Duration(milliseconds: 200), () {
-      getDishes(query);
-    });
+    getDishes(query);
+
     matchSuggestionQuery.clear();
     for (var dish in searchQuery) {
-      if (dish.name!.toLowerCase().contains(query.toLowerCase())) {
+      if (dish.name!.toLowerCase().contains(query.toLowerCase()) &&
+          !matchSuggestionQuery.contains(dish)) {
         matchSuggestionQuery.add(dish);
       }
     }
@@ -160,25 +157,6 @@ class CustomShopSearch extends SearchDelegate {
                     )),
               ),
             ),
-            // trailing: !_hotelController.loading.value
-            //     ? StreamBuilder(
-            //         stream: FirebaseFirestore.instance
-            //             .collection('hotels')
-            //             .where('ownerId', isEqualTo: re.ownerId)
-            //             .snapshots(),
-            //         builder: (context, AsyncSnapshot<QuerySnapshot> sp) {
-            //           if (!sp.hasData) return CupertinoActivityIndicator();
-            //           final data = sp.data!.docs[0];
-
-            //           return CircleAvatar(
-            //             radius: 8,
-            //             backgroundColor: data['status'] == 'open'
-            //                 ? Colors.green
-            //                 : Colors.red,
-            //           );
-            //         },
-            //       )
-            //     : CircularProgressIndicator(),
             onTap: () {},
           );
         });

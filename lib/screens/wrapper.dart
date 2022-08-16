@@ -1,9 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -62,21 +59,26 @@ class _WrapperState extends State<Wrapper> {
         future: checkStatus(),
         builder: (_, s) {
           return Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/logo.png',
-                    height: 180,
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  CircularProgressIndicator(
-                    color: Color(0xFFCFB840),
-                  )
-                ],
+            body: SizedBox(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/logo.png',
+                      height: 180,
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    CircularProgressIndicator(
+                      color: Color(0xFFCFB840),
+                    )
+                  ],
+                ),
               ),
             ),
           );

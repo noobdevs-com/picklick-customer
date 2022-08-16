@@ -27,7 +27,13 @@ class _OrderScreenState extends State<OrderScreen> {
       body: StreamBuilder(
           stream: ref.snapshots(),
           builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData) return Loading();
+            if (!snapshot.hasData)
+              return Loading();
+            else if (snapshot.data!.docs.isEmpty) {
+              return Center(
+                child: Text('No Orders Yet'),
+              );
+            }
             final data = snapshot.data!.docs;
             return ListView.builder(
                 itemCount: data.length,

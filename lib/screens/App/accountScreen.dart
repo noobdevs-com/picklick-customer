@@ -482,7 +482,6 @@ class _MyAccountState extends State<MyAccount> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     locationController.setCurrentlocation();
   }

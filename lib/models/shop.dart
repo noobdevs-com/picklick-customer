@@ -1,11 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Shop {
-  Shop({this.name, this.location, this.img, this.ownerId, this.status});
+  Shop(
+      {this.name,
+      this.location,
+      this.img,
+      this.ownerId,
+      this.status,
+      this.did});
 
   String? name;
   String? location;
   GeoPoint? geoLocation;
+  String? did;
   String? img;
   String? ownerId;
   String? status;
