@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:intl/intl.dart';
-import 'package:picklick_customer/constants/constants.dart';
 
 import 'loading.dart';
 import 'orderTile.dart';

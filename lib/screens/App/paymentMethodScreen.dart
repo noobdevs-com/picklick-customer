@@ -2,10 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:picklick_customer/constants/constants.dart';
 import 'package:picklick_customer/controllers/cart.dart';
 import 'package:picklick_customer/controllers/location.dart';
-import 'package:picklick_customer/controllers/paymet.dart';
+import 'package:picklick_customer/controllers/payment.dart';
+import 'package:picklick_customer/screens/App/home.dart';
 import 'package:picklick_customer/services/fcm_notification.dart';
 
 class PaymentMethodScreen extends StatefulWidget {
@@ -24,10 +26,9 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen>
   GeoPoint? geoPosition;
   void initState() {
     super.initState();
-    // getlocation();
     getFirebaseUserData();
     getRestaurantToken();
-    getAdminToken();
+    // getAdminToken();
 
     _controller = AnimationController(vsync: this);
   }
@@ -38,14 +39,13 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen>
     _controller.dispose();
   }
 
-  // late Position _currentPosition;
   String customerName = '';
   String customerAddress = '';
-  String restaurantToken = '';
+  // String restaurantToken = '';
 
-  String userToken = '';
-  List<String> adminToken = [];
-  String authToken = '';
+  // String userToken = '';
+  // List<String> adminToken = [];
+  // String authToken = '';
   String? networkImage;
   late final AnimationController _controller;
   final fCMNotification = FCMNotification();
@@ -54,13 +54,13 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen>
 
   Future<void> getRestaurantToken() async {
     await FirebaseFirestore.instance
-        .collection('hotels')
+        .collection('restaurants')
         .where('ownerId', isEqualTo: widget.restaurantId)
         .get()
         .then((value) {
       var data = value.docs[0].data();
       setState(() {
-        restaurantToken = data['notificationToken'];
+        // restaurantToken = data['notificationToken'];
         networkImage = data['img'];
         geoPosition = data['geoLocation'];
       });
@@ -68,17 +68,17 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen>
     locationController.getDistanceBtwUserAndRestaurant(geoPosition!);
   }
 
-  Future<void> getAdminToken() async {
-    await FirebaseFirestore.instance
-        .collection('adminBook')
-        .get()
-        .then((value) {
-      final data = value.docs.map<String>((e) => e['notificationToken']);
-      adminToken = data.toList();
-      adminToken.add(restaurantToken);
-      print(adminToken);
-    });
-  }
+  // Future<void> getAdminToken() async {
+  //   await FirebaseFirestore.instance
+  //       .collection('adminBook')
+  //       .get()
+  //       .then((value) {
+  //     final data = value.docs.map<String>((e) => e['notificationToken']);
+  //     adminToken = data.toList();
+  //     adminToken.add(restaurantToken);
+  //     print(adminToken);
+  //   });
+  // }
 
   final ref = FirebaseFirestore.instance
       .collection('userAddressBook')
@@ -95,12 +95,12 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen>
       setState(() {
         customerName = data['name'];
         customerAddress = data['address'];
-        userToken = data['notificationToken'];
+        // userToken = data['notificationToken'];
       });
     });
   }
 
-  final CartController _cartController = Get.find();
+  final CartController _cartController = Get.find<CartController>();
 
   PaymentMethod? _method = PaymentMethod.CASH_ON_DELIVERY;
   @override
@@ -180,108 +180,60 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen>
       ),
       bottomNavigationBar: BottomAppBar(
         child: ElevatedButton(
-          onPressed: () async {
-            if (_method == PaymentMethod.PAY_TM) {
-              paymentController.proceedPayment(250.toString(), customerName,
-                  FirebaseAuth.instance.currentUser!.phoneNumber.toString());
-            }
-            //             final user = FirebaseAuth.instance.currentUser!;
-            // List dishes = _cartController.cart
-            //     .map((element) => element.converToJson())
-            //     .toList();
-            // dishes.addAll(_cartController.offerCart
-            //     .map((element) => element.converToJson())
-            //     .toList());
-
-            // Get.defaultDialog(
-            //     cancelTextColor: Colors.black45,
-            //     confirmTextColor: Colors.white,
-            //     buttonColor: Color(0xFFCFB840),
-            //     title: 'Place Order',
-            //     middleText: 'Do you want to confirm the order ?',
-            //     textCancel: 'No',
-            //     textConfirm: 'Yes',
-            //     onConfirm: () async {
-            //       Navigator.of(context).pop();
-            //       try {
-            //         await FirebaseFirestore.instance.collection('orders').add({
-            //           'dishes': dishes,
-            //           'orderStatus': OrderStatus.pending.toString(),
-            //           'orderedAt': Timestamp.fromDate(DateTime.now()),
-            //           'paymentMethod': _method.toString(),
-            //           'price': _cartController.price.value,
-            //           'quantity': _cartController.cart.length +
-            //               _cartController.offerCart.length,
-            //           'uid': user.uid,
-            //           'restaurantName': widget.restaurantName,
-            //           'customerName': customerName,
-            //           'customerAddress': customerAddress,
-            //           'customerPhoneNumber': user.phoneNumber,
-            //           'PLpriceTotal': _cartController.price.value -
-            //               (_cartController.price.value / 100 * 10),
-            //           'notificationToken': userToken,
-            //           'restaurantId': widget.restaurantId,
-            //           'restaurantImg': networkImage,
-            //           // 'coordinates': [
-            //           //   _currentPosition.longitude,
-            //           //   _currentPosition.latitude
-            //           // ]
-            //           'location': GeoPoint(
-            //               locationController.position!.latitude,
-            //               locationController.position!.longitude),
-            //         }).whenComplete(() async {
-            //           await FirebaseFirestore.instance
-            //               .collection('adminOrders')
-            //               .add({
-            //             'dishes': dishes,
-            //             'orderStatus': OrderStatus.pending.toString(),
-            //             'orderedAt': Timestamp.fromDate(DateTime.now()),
-            //             'paymentMethod': _method.toString(),
-            //             'price': _cartController.price.value,
-            //             'quantity': _cartController.cart.length +
-            //                 _cartController.offerCart.length,
-            //             'uid': user.uid,
-            //             'restaurantName': widget.restaurantName,
-            //             'customerName': customerName,
-            //             'customerAddress': customerAddress,
-            //             'customerPhoneNumber': user.phoneNumber,
-            //             'PLpriceTotal': _cartController.price.value -
-            //                 (_cartController.price.value / 100 * 10),
-            //             'notificationToken': userToken,
-            //             'restaurantId': widget.restaurantId,
-            //             'restaurantImg': networkImage
-            //             // 'coordinates': [
-            //             //   _currentPosition.longitude,
-            //             //   _currentPosition.latitude
-            //             // ]
-            //           });
-            //           adminToken.forEach((e) =>
-            //               fCMNotification.createOrderNotification(
-            //                   e,
-            //                   'Incoming Order',
-            //                   'You have a pending order from a customer !'));
-            //           setState(() {
-            //             _cartController.cart.clear();
-            //             _cartController.offerCart.clear();
-            //             _cartController.price.value = 0;
-            //             Get.bottomSheet(
-            //               Lottie.asset('assets/confirmAnimation.json',
-            //                   fit: BoxFit.fill,
-            //                   controller: _controller, onLoaded: (comp) {
-            //                 _controller.duration = comp.duration;
-            //                 _controller
-            //                     .forward()
-            //                     .whenComplete(() => Navigator.of(context).pop())
-            //                     .then((value) => Get.offAll(() => Home()));
-            //               }),
-            //               backgroundColor: Color(0xFFF0EBCC),
-            //             );
-            //           });
-            //         });
-            //       } catch (e) {
-            //         print(e);
-            //       }
-            //     });
+          onPressed: () {
+            // if (_method == PaymentMethod.PAY_TM) {
+            //   paymentController.proceedPayment(250.toString(), customerName,
+            //       FirebaseAuth.instance.currentUser!.phoneNumber.toString());
+            // }
+            final user = FirebaseAuth.instance.currentUser!;
+            List dishes = _cartController.cart
+                .map((element) => element.converToJson())
+                .toList();
+            Get.defaultDialog(
+                cancelTextColor: Colors.black45,
+                confirmTextColor: Colors.white,
+                buttonColor: Color(0xFFCFB840),
+                title: 'Place Order',
+                middleText: 'Do you want to confirm the order ?',
+                textCancel: 'No',
+                textConfirm: 'Yes',
+                onConfirm: () {
+                  FirebaseFirestore.instance.collection('orders').add({
+                    'dishes': dishes,
+                    'orderStatus': OrderStatus.pending.toString(),
+                    'orderedAt': Timestamp.fromDate(DateTime.now()),
+                    'paymentMethod': _method.toString(),
+                    'price': _cartController.price.value,
+                    'quantity': _cartController.getCartItemCount(),
+                    'uid': user.uid,
+                    'restaurantName': widget.restaurantName,
+                    'customerName': customerName,
+                    'customerAddress': customerAddress,
+                    'customerPhoneNumber': user.phoneNumber,
+                    'restaurantId': widget.restaurantId,
+                    'restaurantImg': networkImage,
+                    'location': GeoPoint(locationController.position!.latitude,
+                        locationController.position!.longitude),
+                  }).then((v) {
+                    setState(() {
+                      _cartController.cart.clear();
+                      _cartController.price.value = 0;
+                      Get.bottomSheet(
+                        Lottie.asset('assets/confirmAnimation.json',
+                            fit: BoxFit.fill,
+                            controller: _controller, onLoaded: (comp) {
+                          _controller.duration = comp.duration;
+                          _controller
+                              .forward()
+                              .then((value) => Get.offAll(() => Home()));
+                        }),
+                        backgroundColor: Color(0xFFF0EBCC),
+                      );
+                    });
+                  }).catchError((e) {
+                    print(e);
+                  });
+                });
           },
           child: Text('Checkout'),
           style: ElevatedButton.styleFrom(

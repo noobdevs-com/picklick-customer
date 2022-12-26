@@ -25,8 +25,7 @@ class _DishScreenState extends State<DishScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (_cartController.cart.length > 0 ||
-            _cartController.offerCart.length > 0) {
+        if (_cartController.cart.length > 0) {
           Get.defaultDialog(
               cancelTextColor: Colors.black45,
               confirmTextColor: Colors.white,
@@ -37,7 +36,6 @@ class _DishScreenState extends State<DishScreen> {
               textCancel: 'No',
               textConfirm: 'Yes',
               onConfirm: () {
-                _cartController.offerCart.clear();
                 _cartController.cart.clear();
                 _cartController.price.value = 0;
                 Get.off(() => Home());
@@ -55,8 +53,7 @@ class _DishScreenState extends State<DishScreen> {
             children: [
               IconButton(
                   onPressed: () {
-                    if (_cartController.cart.length > 0 ||
-                        _cartController.offerCart.length > 0) {
+                    if (_cartController.cart.length > 0) {
                       Get.defaultDialog(
                           cancelTextColor: Colors.black45,
                           confirmTextColor: Colors.white,
@@ -67,7 +64,6 @@ class _DishScreenState extends State<DishScreen> {
                           textCancel: 'No',
                           textConfirm: 'Yes',
                           onConfirm: () {
-                            _cartController.offerCart.clear();
                             _cartController.cart.clear();
                             _cartController.price.value = 0;
                             Get.off(() => Home());
@@ -119,8 +115,7 @@ class _DishScreenState extends State<DishScreen> {
                         children: [
                           Icon(Icons.shopping_cart),
                           Obx(() => Text(
-                              ('${_cartController.cart.length + _cartController.offerCart.length}')
-                                  .toString()))
+                              ('${_cartController.cart.length}').toString()))
                         ],
                       ),
                     ),

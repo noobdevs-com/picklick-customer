@@ -1,14 +1,11 @@
 import 'package:get/get.dart';
 import 'package:picklick_customer/models/cartItem.dart';
 import 'package:picklick_customer/models/dish.dart';
-import 'package:picklick_customer/models/offerDish.dart';
 
 class CartController extends GetxController {
   final cart = <Dish>[].obs;
   final price = 0.0.obs;
-  int getCartItemCount() {
-    return cart.length;
-  }
+  int getCartItemCount() => cart.length;
 
   List<CartItem> getCartItems() {
     return cart.map((e) => CartItem.toJson(e)).toList();
@@ -26,7 +23,7 @@ class CartController extends GetxController {
 
   void removeDishfromCart(Dish dish) {
     if (dish.quantity.value == 1) {
-      null;
+      return;
     } else {
       dish.quantity.value--;
       price.value -= dish.price;
@@ -45,17 +42,4 @@ class CartController extends GetxController {
       dishList[cartIndex] = dishList[index];
     }
   }
-
-  final offerCart = <OfferDish>[].obs;
-  void addOfferDishtoCart(OfferDish offerdish) {
-    offerCart.add(offerdish);
-    price.value += offerdish.discountedPrice;
-  }
-
-  void removeOfferDishtoCart(OfferDish offerdish) {
-    offerCart.remove(offerdish);
-    price.value -= offerdish.discountedPrice;
-  }
-
-  final height = 0.0.obs;
 }

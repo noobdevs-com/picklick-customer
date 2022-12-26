@@ -23,7 +23,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Future<void> getDishes(String value) async {
     searchController.shops.clear();
     FirebaseFirestore.instance
-        .collection('hotels')
+        .collection('restaurants')
         .where('name', isGreaterThanOrEqualTo: value)
         .orderBy('name')
         .where('name', isLessThan: value + 'z')
@@ -123,7 +123,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           trailing: !_hotelController.loading.value
                               ? StreamBuilder(
                                   stream: FirebaseFirestore.instance
-                                      .collection('hotels')
+                                      .collection('restaurants')
                                       .where('ownerId',
                                           isEqualTo:
                                               searchController.shops[i].ownerId)

@@ -215,7 +215,7 @@ class _ShopTileState extends State<ShopTile> {
                                 trailing: !_hotelController.loading.value
                                     ? StreamBuilder(
                                         stream: FirebaseFirestore.instance
-                                            .collection('hotels')
+                                            .collection('restaurants')
                                             .where('ownerId',
                                                 isEqualTo: _hotelController
                                                     .shops[index].ownerId)

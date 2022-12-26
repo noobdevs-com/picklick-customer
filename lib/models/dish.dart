@@ -36,7 +36,7 @@ class Dish extends GetxController {
       "name": this.name,
       "price": this.price,
       "img": this.img,
-      "quantity": this.quantity
+      "quantity": this.quantity.value
     };
   }
 }

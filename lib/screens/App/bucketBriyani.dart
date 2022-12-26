@@ -43,7 +43,7 @@ class _BucketBriyaniState extends State<BucketBriyani>
     super.initState();
     getFirebaseUserData();
     getFirebaseBucketData();
-    getAdminToken();
+    // getAdminToken();
 
     _controller = AnimationController(vsync: this);
   }
@@ -119,17 +119,17 @@ class _BucketBriyaniState extends State<BucketBriyani>
 
   List<String> adminToken = [];
 
-  Future<void> getAdminToken() async {
-    await FirebaseFirestore.instance
-        .collection('adminBook')
-        .get()
-        .then((value) {
-      final data = value.docs.map<String>((e) => e['notificationToken']);
-      adminToken = data.toList();
+  // Future<void> getAdminToken() async {
+  //   await FirebaseFirestore.instance
+  //       .collection('adminBook')
+  //       .get()
+  //       .then((value) {
+  //     final data = value.docs.map<String>((e) => e['notificationToken']);
+  //     adminToken = data.toList();
 
-      print(adminToken);
-    });
-  }
+  //     print(adminToken);
+  //   });
+  // }
 
   String? selectedBucket;
 
@@ -174,9 +174,12 @@ class _BucketBriyaniState extends State<BucketBriyani>
                   final data = sp.data!.docs;
                   if (data.isNotEmpty) {
                     return Center(
-                      child: Text(
-                        'Only One Order Allowed Per User, For More Orders Please Contact us.',
-                        textAlign: TextAlign.justify,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Only One Order Allowed Per User, For More Orders Please Contact us.',
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     );
                   }
@@ -391,11 +394,9 @@ class _BucketBriyaniState extends State<BucketBriyani>
                             SizedBox(
                               height: 25,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
-                              child: Text(
-                                'Note : The Ordered Bucket Will be Delivered on the anounced dates. For Further Queries Contact Us.',
-                              ),
+                            Text(
+                              'Note : The Ordered Bucket Will be Delivered on the anounced dates. For Further Queries Contact Us.',
+                              textAlign: TextAlign.center,
                             ),
                             SizedBox(
                               height: 25,
@@ -412,8 +413,13 @@ class _BucketBriyaniState extends State<BucketBriyani>
                                             'Please Select a bucket and then click place order.');
                                   } else {
                                     Get.defaultDialog(
+                                      buttonColor: Colors.red,
+                                      confirmTextColor: Colors.white,
                                       title: bucket!,
-                                      middleText: descriptionController.text,
+                                      middleText:
+                                          descriptionController.text == ''
+                                              ? 'No Description'
+                                              : descriptionController.text,
                                       onConfirm: () async {
                                         Navigator.of(context).pop();
                                         final user =
@@ -459,11 +465,11 @@ class _BucketBriyaniState extends State<BucketBriyani>
                                               });
                                             }),
                                           );
-                                          adminToken.forEach((e) => fCMNotification
-                                              .createOrderNotification(
-                                                  e,
-                                                  'Incoming Order from $customerName',
-                                                  'You have a pending bucke order from $customerName !'));
+                                          // adminToken.forEach((e) => fCMNotification
+                                          //     .createOrderNotification(
+                                          //         e,
+                                          //         'Incoming Order from $customerName',
+                                          //         'You have a pending bucke order from $customerName !'));
                                         });
                                       },
                                       textConfirm: 'Confirm Order',

@@ -21,7 +21,7 @@ class HotelController extends GetxController {
     loading.value = true;
     shops.clear();
     QuerySnapshot data = await FirebaseFirestore.instance
-        .collection("hotels")
+        .collection("restaurants")
         .orderBy('status', descending: true)
         .orderBy('name')
         .get();
@@ -36,7 +36,7 @@ class HotelController extends GetxController {
 
     try {
       QuerySnapshot ref = await FirebaseFirestore.instance
-          .collection('hotels')
+          .collection('restaurants')
           .where('status', isEqualTo: status)
           .orderBy('name')
           .get();

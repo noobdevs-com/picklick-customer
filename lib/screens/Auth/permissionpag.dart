@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
@@ -132,7 +131,7 @@ class _PermissionPageState extends State<PermissionPage>
                   onPressed: () async {
                     final permissions = await getPermission();
                     if (permissions) {
-                      Position _pos = await Geolocator.getCurrentPosition();
+                      await Geolocator.getCurrentPosition();
 
                       Navigator.pushAndRemoveUntil(
                           context,

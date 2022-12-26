@@ -9,7 +9,7 @@ class CustomShopSearch extends SearchDelegate {
 
   Future<void> getDishes(String value) async {
     FirebaseFirestore.instance
-        .collection('hotels')
+        .collection('restaurants')
         .where('name', isGreaterThanOrEqualTo: value)
         .orderBy('name')
         .where('name', isLessThan: value + 'z')
